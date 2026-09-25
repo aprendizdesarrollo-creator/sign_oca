@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<templates xml:space="preserve">
+    <t t-name="sign_oca.SignatureDialog">
+        <Dialog title="'Firmar documento'" size="'lg'">
+            <!-- Firma guardada: firmar de un clic sin volver a trazarla -->
+            <div t-if="props.savedSignature" class="o_sign_oca_saved mb-3">
+                <div class="d-flex align-items-center justify-content-between">
+                    <span class="fw-semibold">Tu firma guardada</span>
+                    <button
+                        t-if="!state.useSaved"
+                        class="btn btn-sm btn-outline-primary"
+                        t-on-click="() => this.onUseSaved()"
+                    >Usar esta firma</button>
+                    <span t-else="" class="badge text-bg-success">Seleccionada</span>
+                </div>
+                <img
+                    t-att-src="props.savedSignature"
+                    alt="Firma guardada"
+                    t-attf-class="o_sign_oca_saved_img mt-2 {{state.useSaved ? 'is-selected' : ''}}"
+                />
+                <div class="text-muted small mt-1">
+                    O traza una nueva abajo para reemplazarla.
+                </div>
+            </div>
+
+            <!-- Solo Trazar / Cargar: sin `name`, la pestaña automática no aparece -->
+            <NameAndSignature t-props="nameAndSignatureProps" />
+
+            <div class="mt16 small text-muted">
+                Al firmar, aceptas que la firma trazada representa tu firma
+                manuscrita para todos los efectos legales en este documento.
+            </div>
+
+            <t t-set-slot="footer">
+                <button
+                    class="btn btn-primary"
+                    t-att-disabled="!hasSignature"
+                    t-on-click="() => this.onSaveAndSign()"
+                    t-if="props.canSaveSignature"
+                >Guardar y firmar</button>
+                <button
+                    class="btn btn-secondary"
+                    t-att-disabled="!hasSignature"
+                    t-on-click="() => this.onSign()"
+                >Firmar</button>
+                <button
+                    class="btn btn-light"
+                    t-on-click="() => this.onReset()"
+                >Reiniciar</button>
+            </t>
+        </Dialog>
+    </t>
+</templates>
