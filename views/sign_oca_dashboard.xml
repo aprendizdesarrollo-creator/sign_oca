@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<odoo>
+    <record model="ir.actions.client" id="sign_oca_dashboard_action">
+        <field name="name">Tablero de firmas</field>
+        <field name="tag">sign_oca_dashboard</field>
+    </record>
+
+    <record model="ir.ui.menu" id="sign_oca_dashboard_menu">
+        <field name="name">Tablero</field>
+        <field name="parent_id" ref="sign_oca.sign_oca_root_menu" />
+        <field name="action" ref="sign_oca_dashboard_action" />
+        <field name="sequence" eval="5" />
+    </record>
+</odoo>
