@@ -1,0 +1,229 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<templates xml:space="preserve">
+    <t t-name="sign_oca.Dashboard">
+        <div class="o_sign_oca_dashboard o_content">
+            <div t-if="state.loading" class="text-center text-muted p-5">
+                <i class="fa fa-circle-o-notch fa-spin fa-2x" />
+                <div class="mt-2">Cargando indicadores…</div>
+            </div>
+
+            <t t-else="">
+                <div class="o_sign_oca_dashboard_header d-flex flex-wrap align-items-center justify-content-between mb-4">
+                    <div>
+                        <h2 class="mb-1">Firmas</h2>
+                        <span class="text-muted">
+                            Resumen y actividad del módulo de firma digital.
+                        </span>
+                    </div>
+                    <div class="d-flex gap-2">
+                        <button
+                            class="btn btn-secondary"
+                            t-on-click="() => this.loadData()"
+                            title="Actualizar indicadores"
+                        >
+                            <i class="fa fa-refresh me-1" /> Actualizar
+                        </button>
+                        <button class="btn btn-primary" t-on-click="() => this.newRequest()">
+                            <i class="fa fa-plus me-1" /> Nuevo documento
+                        </button>
+                    </div>
+                </div>
+
+                <!-- KPIs: todos accionables, con teclado y lector de pantalla -->
+                <div class="row g-3 mb-4 o_sign_oca_kpis">
+                    <div
+                        class="col-6 col-md-4 col-xl-2"
+                        t-foreach="cards"
+                        t-as="card"
+                        t-key="card.key"
+                    >
+                        <div
+                            t-attf-class="o_sign_oca_kpi o_sign_oca_kpi_{{card.color}}"
+                            role="button"
+                            tabindex="0"
+                            t-att-aria-label="card.value + ' ' + card.label + '. Ver detalle'"
+                            t-on-click="() => this.openCard(card)"
+                            t-on-keydown="(ev) => this.onCardKeydown(ev, card)"
+                        >
+                            <div class="o_sign_oca_kpi_top">
+                                <span class="o_sign_oca_kpi_value" t-esc="card.value" />
+                                <span class="o_sign_oca_kpi_icon">
+                                    <i t-attf-class="fa {{card.icon}}" />
+                                </span>
+                            </div>
+                            <div class="o_sign_oca_kpi_label" t-esc="card.label" />
+                            <small class="o_sign_oca_kpi_sub" t-esc="card.sub" />
+                            <span class="o_sign_oca_kpi_go">
+                                Ver detalle <i class="fa fa-arrow-right" />
+                            </span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Lo que espera por el usuario que está dentro -->
+                <div class="o_sign_oca_mine mb-4" t-if="state.data.my_pending.length">
+                    <div class="o_sign_oca_mine_head">
+                        <div>
+                            <h5 class="mb-0">Te toca firmar</h5>
+                            <small>
+                                Tienes <t t-esc="state.data.my_pending_count" /> documento(s) esperando tu firma
+                            </small>
+                        </div>
+                        <i class="fa fa-pencil-square-o" />
+                    </div>
+                    <div class="o_sign_oca_mine_list">
+                        <div
+                            class="o_sign_oca_mine_item"
+                            t-foreach="state.data.my_pending"
+                            t-as="doc"
+                            t-key="doc.signer_id"
+                        >
+                            <div class="text-truncate">
+                                <span class="fw-semibold" t-esc="doc.name" />
+                                <small class="d-block opacity-75">
+                                    Como <t t-esc="doc.role" /> · desde el <t t-esc="doc.date" />
+                                </small>
+                            </div>
+                            <button
+                                class="btn btn-light btn-sm flex-shrink-0"
+                                t-on-click="() => this.signNow(doc)"
+                            >
+                                Firmar <i class="fa fa-arrow-right ms-1" />
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row g-3 mb-4" t-if="state.data.departments.length">
+                    <div class="col-12">
+                        <div class="card o_sign_oca_panel">
+                            <div class="card-header fw-semibold">
+                                <i class="fa fa-sitemap me-2 text-primary" />
+                                Firmas por departamento
+                            </div>
+                            <div class="card-body pt-3">
+                                <div
+                                    class="o_sign_oca_dep"
+                                    t-foreach="state.data.departments"
+                                    t-as="dep"
+                                    t-key="dep.id"
+                                    role="button"
+                                    tabindex="0"
+                                    t-att-aria-label="'Ver firmas de ' + dep.name"
+                                    t-on-click="() => this.openDepartment(dep)"
+                                    t-on-keydown="(ev) => (ev.key === 'Enter' || ev.key === ' ') &amp;&amp; this.openDepartment(dep)"
+                                >
+                                    <div class="o_sign_oca_dep_top">
+                                        <span class="fw-semibold text-truncate" t-esc="dep.name" />
+                                        <span class="o_sign_oca_dep_nums">
+                                            <span class="text-success fw-semibold" t-esc="dep.signed" /> firmadas
+                                            <span class="text-muted mx-1">·</span>
+                                            <span class="text-warning fw-semibold" t-esc="dep.pending" /> pendientes
+                                            <t t-if="dep.rejected">
+                                                <span class="text-muted mx-1">·</span>
+                                                <span class="text-danger fw-semibold" t-esc="dep.rejected" /> rechazadas
+                                            </t>
+                                        </span>
+                                    </div>
+                                    <div class="o_sign_oca_bar">
+                                        <div
+                                            class="o_sign_oca_bar_fill"
+                                            t-attf-style="width: {{dep.rate}}%"
+                                        />
+                                        <div
+                                            class="o_sign_oca_bar_rejected"
+                                            t-if="dep.rejected"
+                                            t-attf-style="width: {{dep.rejected_rate}}%"
+                                        />
+                                    </div>
+                                    <small class="text-muted">
+                                        <t t-esc="dep.rate" />% completado
+                                        <t t-if="dep.rejected">
+                                            · <t t-esc="dep.rejected_rate" />% rechazado
+                                        </t>
+                                    </small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row g-3">
+                    <div class="col-lg-6">
+                        <div class="card h-100 o_sign_oca_panel">
+                            <div class="card-header d-flex align-items-center justify-content-between">
+                                <span class="fw-semibold">
+                                    <i class="fa fa-hourglass-half me-2 text-warning" />
+                                    Pendientes de firma
+                                </span>
+                                <span class="badge text-bg-secondary" t-esc="state.data.counts.sent" />
+                            </div>
+                            <div class="list-group list-group-flush">
+                                <a
+                                    class="list-group-item list-group-item-action d-flex justify-content-between align-items-center"
+                                    t-foreach="state.data.pending"
+                                    t-as="doc"
+                                    t-key="doc.id"
+                                    href="#"
+                                    t-on-click.prevent="() => this.openRequest(doc.id)"
+                                >
+                                    <span class="text-truncate me-2">
+                                        <t t-esc="doc.name" />
+                                        <small class="text-muted d-block">
+                                            Enviado el <t t-esc="doc.date" />
+                                        </small>
+                                    </span>
+                                    <span class="badge text-bg-light flex-shrink-0">
+                                        <t t-esc="doc.signed" />/<t t-esc="doc.signers" /> firmas
+                                    </span>
+                                </a>
+                                <div
+                                    t-if="!state.data.pending.length"
+                                    class="list-group-item text-muted"
+                                >
+                                    No hay documentos esperando firma.
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-lg-6">
+                        <div class="card h-100 o_sign_oca_panel">
+                            <div class="card-header fw-semibold">
+                                <i class="fa fa-history me-2 text-primary" />
+                                Actividad reciente
+                            </div>
+                            <div class="list-group list-group-flush">
+                                <a
+                                    class="list-group-item list-group-item-action d-flex justify-content-between align-items-center"
+                                    t-foreach="state.data.recent"
+                                    t-as="doc"
+                                    t-key="doc.id"
+                                    href="#"
+                                    t-on-click.prevent="() => this.openRequest(doc.id)"
+                                >
+                                    <span class="text-truncate me-2">
+                                        <t t-esc="doc.name" />
+                                        <small class="text-muted" t-if="doc.version > 1">
+                                            · v<t t-esc="doc.version" />
+                                        </small>
+                                        <small class="text-muted d-block">
+                                            <t t-esc="doc.signed" />/<t t-esc="doc.signers" /> firmas
+                                        </small>
+                                    </span>
+                                    <span class="badge text-bg-light flex-shrink-0" t-esc="doc.state_label" />
+                                </a>
+                                <div
+                                    t-if="!state.data.recent.length"
+                                    class="list-group-item text-muted"
+                                >
+                                    Todavía no hay documentos.
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </t>
+        </div>
+    </t>
+</templates>

@@ -1,0 +1,277 @@
+// ===========================================================
+// Tablero de firmas
+// ===========================================================
+.o_sign_oca_dashboard {
+    --o-sign-radius: 14px;
+    --o-sign-ink: #0f172a;
+    --o-sign-muted: #64748b;
+    --o-sign-line: #e6e9f0;
+
+    padding: 1.75rem;
+    background: linear-gradient(180deg, #f7f9fc 0%, #eef2f8 100%);
+    color: var(--o-sign-ink);
+    // Sin alto limitado, `overflow: auto` no genera barras: el div crece con
+    // el contenido y el scroll queda en manos del contenedor de Odoo.
+    height: calc(100vh - 90px);
+    overflow: auto;
+
+    h2 {
+        font-weight: 700;
+        letter-spacing: -0.02em;
+    }
+
+    .o_sign_oca_dashboard_header {
+        gap: 1rem;
+    }
+
+    // Los 7 KPI van en una sola fila. Cuando no caben, la fila se desplaza
+    // en horizontal en lugar de aplastar las tarjetas hasta hacerlas ilegibles.
+    @media (max-width: 1399.98px) {
+        .o_sign_oca_kpis {
+            flex-wrap: nowrap;
+            overflow-x: auto;
+            overflow-y: hidden;
+            padding-bottom: 0.5rem;
+            scroll-snap-type: x proximity;
+
+            > [class*="col-"] {
+                flex: 0 0 auto;
+                width: 210px;
+                max-width: 210px;
+                scroll-snap-align: start;
+            }
+            // barra discreta pero visible: si no se ve, nadie descubre que hay más
+            &::-webkit-scrollbar {
+                height: 8px;
+            }
+            &::-webkit-scrollbar-thumb {
+                background: #cbd5e1;
+                border-radius: 999px;
+            }
+            &::-webkit-scrollbar-track {
+                background: transparent;
+            }
+        }
+    }
+
+    // ---------- KPI ----------
+    .o_sign_oca_kpi {
+        position: relative;
+        height: 100%;
+        padding: 1.15rem 1.15rem 1.9rem;
+        background: #fff;
+        border: 1px solid var(--o-sign-line);
+        border-radius: var(--o-sign-radius);
+        box-shadow: 0 1px 2px rgba(15, 23, 42, 0.04);
+        cursor: pointer;
+        overflow: hidden;
+        transition: transform 0.18s ease, box-shadow 0.18s ease,
+            border-color 0.18s ease;
+
+        // franja de color viva, sin recuadros duros
+        &::before {
+            content: "";
+            position: absolute;
+            inset: 0 0 auto 0;
+            height: 3px;
+            background: linear-gradient(
+                90deg,
+                var(--o-sign-kpi-color, #64748b),
+                color-mix(in srgb, var(--o-sign-kpi-color, #64748b) 35%, #fff)
+            );
+        }
+
+        &:hover,
+        &:focus-visible {
+            transform: translateY(-3px);
+            border-color: color-mix(
+                in srgb,
+                var(--o-sign-kpi-color, #64748b) 45%,
+                var(--o-sign-line)
+            );
+            box-shadow: 0 12px 26px rgba(15, 23, 42, 0.1);
+        }
+        &:focus-visible {
+            outline: 2px solid var(--o-sign-kpi-color, #64748b);
+            outline-offset: 2px;
+        }
+
+        .o_sign_oca_kpi_top {
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+        }
+        .o_sign_oca_kpi_value {
+            font-size: 2.15rem;
+            font-weight: 800;
+            line-height: 1.05;
+            letter-spacing: -0.03em;
+            color: var(--o-sign-kpi-color, #64748b);
+        }
+        // icono en pastilla, no suelto
+        .o_sign_oca_kpi_icon {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 34px;
+            height: 34px;
+            border-radius: 10px;
+            font-size: 0.95rem;
+            color: var(--o-sign-kpi-color, #64748b);
+            background: color-mix(
+                in srgb,
+                var(--o-sign-kpi-color, #64748b) 12%,
+                #fff
+            );
+        }
+        .o_sign_oca_kpi_label {
+            margin-top: 0.45rem;
+            font-weight: 600;
+            font-size: 0.95rem;
+        }
+        .o_sign_oca_kpi_sub {
+            color: var(--o-sign-muted);
+            display: block;
+            line-height: 1.25;
+            font-size: 0.78rem;
+        }
+        .o_sign_oca_kpi_go {
+            position: absolute;
+            left: 1.15rem;
+            bottom: 0.6rem;
+            font-size: 0.74rem;
+            font-weight: 600;
+            color: var(--o-sign-kpi-color, #64748b);
+            opacity: 0;
+            transform: translateX(-4px);
+            transition: opacity 0.18s ease, transform 0.18s ease;
+        }
+        &:hover .o_sign_oca_kpi_go,
+        &:focus-visible .o_sign_oca_kpi_go {
+            opacity: 1;
+            transform: translateX(0);
+        }
+    }
+
+    .o_sign_oca_kpi_mine      { --o-sign-kpi-color: #6d28d9; }
+    .o_sign_oca_kpi_primary   { --o-sign-kpi-color: #2563eb; }
+    .o_sign_oca_kpi_warning   { --o-sign-kpi-color: #d97706; }
+    .o_sign_oca_kpi_success   { --o-sign-kpi-color: #059669; }
+    .o_sign_oca_kpi_danger    { --o-sign-kpi-color: #dc2626; }
+    .o_sign_oca_kpi_secondary { --o-sign-kpi-color: #64748b; }
+    .o_sign_oca_kpi_info      { --o-sign-kpi-color: #0891b2; }
+
+    // ---------- Bloque "te toca firmar" ----------
+    .o_sign_oca_mine {
+        border-radius: var(--o-sign-radius);
+        background: linear-gradient(120deg, #4f46e5 0%, #7c3aed 55%, #a21caf 100%);
+        color: #fff;
+        box-shadow: 0 14px 30px rgba(79, 70, 229, 0.25);
+        overflow: hidden;
+
+        .o_sign_oca_mine_head {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 1rem 1.25rem;
+
+            i {
+                font-size: 1.6rem;
+                opacity: 0.5;
+            }
+        }
+        .o_sign_oca_mine_list {
+            background: rgba(255, 255, 255, 0.1);
+        }
+        .o_sign_oca_mine_item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 1rem;
+            padding: 0.7rem 1.25rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.16);
+        }
+    }
+
+    // ---------- Paneles ----------
+    .o_sign_oca_panel {
+        border: 1px solid var(--o-sign-line);
+        border-radius: var(--o-sign-radius);
+        box-shadow: 0 1px 2px rgba(15, 23, 42, 0.04);
+        overflow: hidden;
+
+        .card-header {
+            background: #fff;
+            border-bottom: 1px solid var(--o-sign-line);
+            padding: 0.85rem 1.1rem;
+        }
+        .list-group-item {
+            border-left: 0;
+            border-right: 0;
+            padding: 0.7rem 1.1rem;
+        }
+    }
+
+    // ---------- Departamentos ----------
+    .o_sign_oca_dep {
+        padding: 0.6rem 0.7rem;
+        border-radius: 10px;
+        cursor: pointer;
+        transition: background 0.15s ease;
+
+        & + .o_sign_oca_dep {
+            margin-top: 0.35rem;
+        }
+        &:hover,
+        &:focus-visible {
+            background: #f1f5f9;
+        }
+        &:focus-visible {
+            outline: 2px solid #2563eb;
+            outline-offset: 1px;
+        }
+
+        .o_sign_oca_dep_top {
+            display: flex;
+            align-items: baseline;
+            justify-content: space-between;
+            gap: 1rem;
+            margin-bottom: 0.35rem;
+        }
+        .o_sign_oca_dep_nums {
+            font-size: 0.82rem;
+            white-space: nowrap;
+        }
+    }
+    // barra apilada: firmadas (verde) + rechazadas (rojo); el hueco es lo pendiente
+    .o_sign_oca_bar {
+        display: flex;
+        height: 8px;
+        border-radius: 999px;
+        background: #e8edf5;
+        overflow: hidden;
+
+        .o_sign_oca_bar_fill {
+            height: 100%;
+            background: linear-gradient(90deg, #059669, #34d399);
+            transition: width 0.4s ease;
+        }
+        .o_sign_oca_bar_rejected {
+            height: 100%;
+            background: linear-gradient(90deg, #dc2626, #f87171);
+            transition: width 0.4s ease;
+        }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+        .o_sign_oca_kpi,
+        .o_sign_oca_kpi_go,
+        .o_sign_oca_bar_fill,
+        .o_sign_oca_dep {
+            transition: none;
+        }
+        .o_sign_oca_kpi:hover {
+            transform: none;
+        }
+    }
+}
