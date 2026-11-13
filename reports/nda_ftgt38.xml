@@ -1,0 +1,218 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<odoo>
+    <record id="paperformat_ftgt38" model="report.paperformat">
+        <field name="name">FTGT38 (A4 sin encabezado)</field>
+        <field name="format">A4</field>
+        <field name="orientation">Portrait</field>
+        <field name="margin_top">10</field>
+        <field name="margin_bottom">10</field>
+        <field name="margin_left">10</field>
+        <field name="margin_right">10</field>
+        <field name="header_line" eval="False" />
+        <field name="header_spacing">0</field>
+        <field name="dpi">90</field>
+    </record>
+
+    <record id="action_report_nda_ftgt38" model="ir.actions.report">
+        <field name="name">FTGT38 Acuerdo de Confidencialidad (NDA)</field>
+        <field name="model">sign.oca.mass.send.line</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">sign_oca.report_nda_ftgt38</field>
+        <field name="report_file">sign_oca.report_nda_ftgt38</field>
+        <field name="paperformat_id" ref="paperformat_ftgt38" />
+        <field
+            name="print_report_name"
+            >'%s - %s' % (object.agreement_number or 'NDA', object.recipient_name)</field>
+    </record>
+
+    <template id="report_nda_ftgt38">
+        <t t-call="web.html_container">
+            <t t-foreach="docs" t-as="o">
+                <t t-call="sign_oca.report_nda_ftgt38_doc" />
+            </t>
+        </t>
+    </template>
+
+    <!-- Recuadro de firma. Las dos marcas invisibles (texto blanco de 1px)
+         señalan sus esquinas: al generar el PDF se leen para ubicar el campo
+         de firma de sign_oca exactamente aquí. No quitarlas. -->
+    <template id="report_nda_ftgt38_sign_box">
+        <div style="position: relative; height: 95px;">
+            <span
+                style="position: absolute; left: 3%; top: 4px; font-size: 1px; color: #ffffff; white-space: nowrap;"
+                t-out="'SDTSIGN%s1' % box"
+            />
+            <span
+                style="position: absolute; left: 97%; bottom: 4px; font-size: 1px; color: #ffffff; white-space: nowrap;"
+                t-out="'SDTSIGN%s2' % box"
+            />
+        </div>
+    </template>
+
+    <template id="report_nda_ftgt38_doc">
+        <t t-set="v" t-value="o._get_report_values()" />
+        <t t-set="m" t-value="o.mass_send_id" />
+        <t t-call="web.basic_layout">
+        <div class="page" style="font-family: 'Century Gothic', 'URW Gothic', 'Helvetica', Arial, sans-serif; font-size: 12px; color: #000;">
+            <style>
+                .ftgt38 { width: 100%; border-collapse: collapse; table-layout: fixed; }
+                .ftgt38 td { border: 1px solid #000 !important; padding: 4px 6px; vertical-align: middle !important; font-size: 12px; }
+                .ftgt38 .lbl { background-color: #F4F3F4; font-weight: bold; }
+                .ftgt38 .head { background-color: #F4F3F4; font-weight: bold; text-align: center; }
+                .ftgt38 .row24 { height: 30px; }
+            </style>
+            <!-- Banner con el cuadro de control documental superpuesto, igual
+                 que el cuadro de texto del Excel FTGT38. -->
+            <div style="position: relative;">
+                <img
+                    src="/sign_oca/static/img/ftgt38_header.jpg"
+                    style="width: 100%; display: block;"
+                    alt="SDT Ingeniería"
+                />
+                <div
+                    style="position: absolute; left: 51.5%; top: 46%; color: #3F464C; font-size: 11px; line-height: 1.25; white-space: nowrap;"
+                >
+                    <div>FORMATO DE ACUERDO DE CONFIDENCIALIDAD (NDA)</div>
+                    <div>FTGT38&#160; Versión 01</div>
+                    <div>C2 · CONFIDENCIAL | I3 · VIGENTE | D3 · DIFERIDA</div>
+                    <div>25/05/2026</div>
+                </div>
+            </div>
+            <table class="ftgt38">
+                <colgroup>
+                    <col style="width: 38%;" />
+                    <col style="width: 62%;" />
+                </colgroup>
+                <tr>
+                    <td
+                        colspan="2"
+                        style="text-align: center; font-weight: bold; font-size: 18px; height: 30px;"
+                    >FORMATO DE ACUERDO DE CONFIDENCIALIDAD (NDA)</td>
+                </tr>
+                <tr>
+                    <td class="head">Control Anexo A: 6.6</td>
+                    <td class="head">Áreas: Talento Humano / Legal y Cumplimiento</td>
+                </tr>
+                <tr>
+                    <td colspan="2" style="font-size: 11px; height: 50px;">
+                        Instrucciones: diligenciar y firmar antes de otorgar acceso a
+                        información clasificada como Confidencial o Restringida a un
+                        colaborador, contratista, proveedor o tercero, o al iniciar un
+                        proyecto con un cliente. Ver PLGT18 (Política de Acuerdos de
+                        Confidencialidad) y PCGT04 (Contacto Grupos de Interés SI).
+                    </td>
+                </tr>
+                <tr class="row24">
+                    <td class="lbl">N° de Acuerdo</td>
+                    <td t-out="v['number']" />
+                </tr>
+                <tr class="row24">
+                    <td class="lbl">Fecha de Suscripción</td>
+                    <!-- Vacía al generar: la fecha se escribe en el PDF cuando
+                         firman todas las partes (marcas SDTSIGNC). -->
+                    <td style="padding: 0;">
+                        <div style="position: relative; height: 22px;">
+                            <span
+                                style="position: absolute; left: 6px; top: 2px; font-size: 1px; color: #ffffff; white-space: nowrap;"
+                            >SDTSIGNC1</span>
+                            <span
+                                style="position: absolute; left: 50%; bottom: 2px; font-size: 1px; color: #ffffff; white-space: nowrap;"
+                            >SDTSIGNC2</span>
+                            <span
+                                t-if="v['date']"
+                                style="position: absolute; left: 6px; top: 4px;"
+                                t-out="v['date'].strftime('%d/%m/%Y')"
+                            />
+                        </div>
+                    </td>
+                </tr>
+                <tr class="row24">
+                    <td class="lbl">Parte Reveladora</td>
+                    <td t-out="v['disclosing_party']" />
+                </tr>
+                <tr class="row24">
+                    <td class="lbl">Parte Receptora (Nombre / Razón Social)</td>
+                    <td t-out="o.recipient_name" />
+                </tr>
+                <tr class="row24">
+                    <td class="lbl">Identificación (C.C. / NIT)</td>
+                    <td t-out="o.identification" />
+                </tr>
+                <tr class="row24">
+                    <td class="lbl">Calidad de la Parte Receptora</td>
+                    <td t-out="o.quality" />
+                </tr>
+                <tr class="row24">
+                    <td class="lbl">Información Clasificada Objeto de Protección (ref. MTGT04)</td>
+                    <td t-out="v['classification']" />
+                </tr>
+                <tr class="row24">
+                    <td class="lbl">Vigencia del Acuerdo</td>
+                    <td t-out="m.validity" />
+                </tr>
+                <tr class="row24">
+                    <td class="lbl">Excepciones a la Confidencialidad</td>
+                    <td t-out="v['exceptions']" />
+                </tr>
+                <tr class="row24">
+                    <td class="lbl">Consecuencias del Incumplimiento</td>
+                    <td t-out="v['consequences']" />
+                </tr>
+                <tr class="row24">
+                    <td class="lbl">Ley Aplicable y Jurisdicción</td>
+                    <td t-out="m.applicable_law" />
+                </tr>
+                <!-- Texto de la fila 17 del Excel FTGT38 (Legal). No editar
+                     sin la versión aprobada del formato. -->
+                <tr>
+                    <td class="head" colspan="2">DECLARACIONES Y OBLIGACIONES</td>
+                </tr>
+                <tr>
+                    <td colspan="2" style="text-align: justify; font-size: 10.5px; line-height: 1.35; padding: 6px 8px;">
+                        <p style="margin: 0 0 5px 0;">EL COLABORADOR declara que, con ocasión de su relación laboral con SDT INGENIERÍA S.A.S., podrá conocer, recibir, consultar, tratar o tener acceso a información de SDT, de sus clientes, proveedores, aliados o terceros vinculados, independientemente del medio o soporte en que se encuentre, incluyendo información técnica, comercial, financiera, jurídica, administrativa, operativa, estratégica, contractual, de seguridad de la información, bases de datos, datos personales, credenciales, configuraciones, software, documentación, metodologías, procedimientos, desarrollos, know-how y, en general, cualquier información clasificada como confidencial, restringida, reservada o que por su naturaleza no sea de carácter público (en adelante, la “Información Confidencial”).</p>
+                        <p style="margin: 0 0 5px 0;">EL COLABORADOR reconoce que la Información Confidencial es propiedad o se encuentra bajo legítima tenencia de SDT o del tercero correspondiente y que el acceso otorgado con ocasión de sus funciones no implica transferencia de propiedad, licencia, autorización de divulgación ni derecho de utilización para fines diferentes al cumplimiento de sus obligaciones laborales.</p>
+                        <p style="margin: 0 0 5px 0;">En consecuencia, EL COLABORADOR se obliga a: (i) utilizar la Información Confidencial únicamente para el desarrollo de sus funciones y bajo el principio de necesidad de conocer; (ii) abstenerse de divulgarla, comunicarla, cederla, publicarla, copiarla, extraerla, reproducirla, modificarla, comercializarla o utilizarla en beneficio propio o de terceros sin autorización previa de SDT; (iii) custodiar adecuadamente las credenciales, claves, equipos, documentos y demás medios mediante los cuales tenga acceso a información de la Compañía; (iv) abstenerse de compartir usuarios, contraseñas o mecanismos de autenticación; (v) no cargar, almacenar, transferir o incorporar Información Confidencial en correos personales, dispositivos particulares, memorias externas, nubes, repositorios, plataformas de terceros o herramientas de inteligencia artificial no autorizadas por SDT; (vi) cumplir las políticas, procedimientos y controles de seguridad de la información, protección de datos personales y uso de activos establecidos por SDT; (vii) reportar inmediatamente cualquier pérdida, acceso no autorizado, divulgación, envío erróneo, incidente o sospecha de compromiso de la información; (viii) utilizar los datos personales a los que tenga acceso exclusivamente para el desarrollo de sus funciones y conforme a las instrucciones impartidas por SDT; y (ix) al finalizar la relación laboral, cambiar de cargo o cuando SDT lo solicite, devolver los documentos, equipos, archivos, credenciales y demás activos que contengan Información Confidencial y abstenerse de conservar copias físicas o digitales de estos.</p>
+                        <p style="margin: 0 0 5px 0;">EL COLABORADOR declara haber leído y comprendido íntegramente el presente Acuerdo, acepta expresamente las obligaciones aquí establecidas y reconoce su carácter obligatorio y vinculante como parte de los deberes derivados de su relación laboral con SDT INGENIERÍA S.A.S., sin que su terminación extinga las obligaciones de confidencialidad que por su naturaleza deban permanecer vigentes.</p>
+                        <p style="margin: 0;">Las obligaciones previstas en el presente Acuerdo serán exigibles durante toda la relación laboral y durante los cinco (5) años siguientes a su terminación, cualquiera que sea su causa. Respecto de información que constituya secreto empresarial, la obligación permanecerá mientras dicha información conserve tal calidad, y respecto de datos personales, durante todo el tiempo en que estos permanezcan bajo custodia o sean tratados por EL COLABORADOR.</p>
+                    </td>
+                </tr>
+            </table>
+            <!-- Firmas: tabla aparte que no se parte entre páginas -->
+            <table class="ftgt38" style="page-break-inside: avoid; margin-top: -1px;">
+                <!-- Las firmas pueden quedar en otra hoja: esta línea la ata al acuerdo. -->
+                <tr>
+                    <td colspan="2" style="font-size: 10.5px; text-align: center;">
+                        Acuerdo N° <span t-out="v['number']" /> · Parte Receptora:
+                        <span t-out="o.recipient_name" /> · Identificación:
+                        <span t-out="o.identification" />
+                    </td>
+                </tr>
+                <tr>
+                    <td class="head" style="width: 50%;">Firma Parte Reveladora (Representante SDT)</td>
+                    <td class="head" style="width: 50%;">Firma Parte Receptora</td>
+                </tr>
+                <tr>
+                    <td style="padding: 0; vertical-align: top;">
+                        <t t-call="sign_oca.report_nda_ftgt38_sign_box">
+                            <t t-set="box" t-value="'A'" />
+                        </t>
+                        <div style="padding: 2px 6px 6px 6px; border-top: 1px solid #999;">
+                            <div>Nombre: <span t-out="v['signer_name']" /></div>
+                            <div>Cargo: <span t-out="v['signer_job']" /></div>
+                        </div>
+                    </td>
+                    <td style="padding: 0; vertical-align: top;">
+                        <t t-call="sign_oca.report_nda_ftgt38_sign_box">
+                            <t t-set="box" t-value="'B'" />
+                        </t>
+                        <div style="padding: 2px 6px 6px 6px; border-top: 1px solid #999;">
+                            <div>Nombre: <span t-out="o.recipient_name" /></div>
+                            <div>Cargo: <span t-out="o.job_title or ''" /></div>
+                        </div>
+                    </td>
+                </tr>
+            </table>
+        </div>
+        </t>
+    </template>
+</odoo>
