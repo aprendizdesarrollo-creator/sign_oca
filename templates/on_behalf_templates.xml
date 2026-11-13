@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<odoo>
+    <!-- Mis documentos de firma: a nombre de quién está cada documento -->
+    <template id="sign_requests_on_behalf" inherit_id="sign_oca.sign_requests">
+        <xpath expr="//thead//th[hasclass('text-start')]" position="before">
+            <th class="text-start">A nombre de</th>
+        </xpath>
+        <xpath expr="//td[hasclass('text-start')]" position="before">
+            <td class="text-start">
+                <t t-if="sign_request.partner_id == request.env.user.partner_id">Usted</t>
+                <t t-else="">
+                    <span t-out="sign_request.partner_id.name" />
+                    <span class="badge text-bg-info ms-1">Firma autorizada</span>
+                </t>
+            </td>
+        </xpath>
+    </template>
+</odoo>

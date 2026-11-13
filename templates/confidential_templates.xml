@@ -1,0 +1,168 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<odoo>
+    <!-- Pantalla previa al documento: pide la clave y/o el código -->
+    <template id="portal_sign_document_unlock">
+        <t t-call="web.layout">
+            <t t-set="head">
+                <meta name="viewport" content="width=device-width, initial-scale=1" />
+                <t t-call-assets="oca_sign.assets_frontend_sign" t-js="false" />
+            </t>
+
+            <div class="container" style="max-width: 560px;">
+                <div class="o_logo">
+                    <img
+                        t-attf-src="/web/binary/company_logo?company={{ company.id }}"
+                        alt="Logo"
+                    />
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <h2>
+                            <i class="fa fa-lock me-2" />
+                            <t t-out="signer.request_id.name" />
+                        </h2>
+                    </div>
+                    <div class="card-body">
+                        <div t-if="error" class="alert alert-danger" role="alert">
+                            <t t-out="error" />
+                        </div>
+                        <div t-if="info" class="alert alert-info" role="status">
+                            <t t-out="info" />
+                        </div>
+
+                        <form
+                            t-if="step == 'key'"
+                            method="post"
+                            t-attf-action="/sign_oca/unlock/{{ signer.id }}/{{ access_token }}"
+                        >
+                            <input
+                                type="hidden"
+                                name="csrf_token"
+                                t-att-value="request.csrf_token()"
+                            />
+                            <input type="hidden" name="step" value="key" />
+                            <p>Este documento es confidencial.</p>
+                            <label class="form-label" for="sign_oca_key">
+                                <t t-if="protection == 'document_number'">
+                                    Ingrese su número de documento de identidad
+                                    (sin puntos ni espacios).
+                                </t>
+                                <t t-else="">
+                                    Ingrese la clave que le entregó quien envió el
+                                    documento.
+                                </t>
+                            </label>
+                            <input
+                                id="sign_oca_key"
+                                type="password"
+                                name="key"
+                                class="form-control"
+                                autocomplete="off"
+                                required="required"
+                                autofocus="autofocus"
+                                t-att-disabled="locked and 'disabled'"
+                            />
+                            <button
+                                type="submit"
+                                class="btn btn-primary mt-3"
+                                t-att-disabled="locked and 'disabled'"
+                            >Abrir documento</button>
+                        </form>
+
+                        <t t-if="step == 'otp'">
+                            <p>
+                                Para abrir el documento necesita el código de
+                                verificación que se envía a
+                                <b t-out="masked_email or 'su correo'" />.
+                            </p>
+                            <form
+                                t-if="otp_pending"
+                                method="post"
+                                t-attf-action="/sign_oca/unlock/{{ signer.id }}/{{ access_token }}"
+                            >
+                                <input
+                                    type="hidden"
+                                    name="csrf_token"
+                                    t-att-value="request.csrf_token()"
+                                />
+                                <input type="hidden" name="step" value="otp" />
+                                <label class="form-label" for="sign_oca_code">
+                                    Código de 6 dígitos
+                                </label>
+                                <input
+                                    id="sign_oca_code"
+                                    type="text"
+                                    name="code"
+                                    inputmode="numeric"
+                                    maxlength="6"
+                                    class="form-control"
+                                    autocomplete="one-time-code"
+                                    required="required"
+                                    autofocus="autofocus"
+                                    t-att-disabled="locked and 'disabled'"
+                                />
+                                <button
+                                    type="submit"
+                                    class="btn btn-primary mt-3"
+                                    t-att-disabled="locked and 'disabled'"
+                                >Verificar</button>
+                            </form>
+                            <form
+                                method="post"
+                                class="mt-3"
+                                t-attf-action="/sign_oca/unlock/{{ signer.id }}/{{ access_token }}"
+                            >
+                                <input
+                                    type="hidden"
+                                    name="csrf_token"
+                                    t-att-value="request.csrf_token()"
+                                />
+                                <input type="hidden" name="step" value="send_otp" />
+                                <button
+                                    type="submit"
+                                    t-attf-class="btn {{ 'btn-link px-0' if otp_pending else 'btn-primary' }}"
+                                    t-att-disabled="locked and 'disabled'"
+                                >
+                                    <t t-if="otp_pending">Enviar otro código</t>
+                                    <t t-else="">Enviar código a mi correo</t>
+                                </button>
+                            </form>
+                        </t>
+
+                        <p class="text-muted mt-4 mb-0">
+                            Tras cinco intentos fallidos el enlace se bloquea
+                            unos minutos.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </t>
+    </template>
+
+    <!-- Aviso en el correo de invitación a firmar -->
+    <template
+        id="sign_oca_template_mail_confidential"
+        inherit_id="sign_oca.sign_oca_template_mail"
+    >
+        <xpath expr="//span[@t-if='body']" position="after">
+            <t t-set="sign_request" t-value="record.request_id.sudo()" />
+            <div
+                t-if="sign_request.is_confidential or sign_request.access_protection != 'none' or sign_request.require_otp"
+                style="margin: 16px 0px; padding: 8px 16px; border-left: 3px solid #875A7B;"
+            >
+                <b>Documento confidencial.</b>
+                <t t-if="sign_request.access_protection == 'document_number'">
+                    Para abrirlo se le pedirá su número de documento de identidad.
+                </t>
+                <t t-elif="sign_request.access_protection == 'password'">
+                    Para abrirlo se le pedirá la clave que le entregue quien lo
+                    envió.
+                </t>
+                <t t-if="sign_request.require_otp">
+                    También recibirá un código de verificación en este correo.
+                </t>
+            </div>
+        </xpath>
+    </template>
+</odoo>
