@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<odoo>
+    <!-- Categoria propia para el permiso de confidenciales. Si compartiera la
+         categoria con los perfiles, Odoo mostraria todo como casillas (no hay
+         una escalera de grupos) y la lista de perfiles solo existiria con el
+         codigo de sign_oca cargado: al actualizar un modulo que carga antes
+         (p. ej. lavish_erp_theme) la vista de permisos dejaba de validar. -->
+    <record id="sign_oca_module_category_confidential" model="ir.module.category">
+        <field name="name">Firmar: confidencialidad</field>
+        <field name="sequence">21</field>
+    </record>
+    <!-- Grupo aparte de los perfiles de firma: el Administrador de firmas no
+         lo trae, hay que asignarlo a propósito. -->
+    <record id="sign_oca_group_confidential" model="res.groups">
+        <field name="name">Documentos confidenciales: ver y gestionar todos</field>
+        <field name="category_id" ref="sign_oca_module_category_confidential" />
+        <field name="implied_ids" eval="[(4, ref('sign_oca_group_user'))]" />
+        <field name="comment">Ve todos los documentos marcados como confidenciales y puede cambiar su lista de permisos.</field>
+    </record>
+
+    <!-- Accesos del modelo de permisos. Quién puede cambiarlos lo controla el
+         modelo: el responsable, quien emitió el documento o este grupo. -->
+    <record id="access_sign_oca_request_access_user" model="ir.model.access">
+        <field name="name">sign.oca.request.access.user</field>
+        <field name="model_id" ref="model_sign_oca_request_access" />
+        <field name="group_id" ref="sign_oca_group_user" />
+        <field name="perm_read" eval="1" />
+        <field name="perm_write" eval="0" />
+        <field name="perm_create" eval="0" />
+        <field name="perm_unlink" eval="0" />
+    </record>
+    <record id="access_sign_oca_request_access_creator" model="ir.model.access">
+        <field name="name">sign.oca.request.access.creator</field>
+        <field name="model_id" ref="model_sign_oca_request_access" />
+        <field name="group_id" ref="sign_oca_group_creator" />
+        <field name="perm_read" eval="1" />
+        <field name="perm_write" eval="1" />
+        <field name="perm_create" eval="1" />
+        <field name="perm_unlink" eval="1" />
+    </record>
+    <record id="access_sign_oca_request_access_confidential" model="ir.model.access">
+        <field name="name">sign.oca.request.access.confidential</field>
+        <field name="model_id" ref="model_sign_oca_request_access" />
+        <field name="group_id" ref="sign_oca_group_confidential" />
+        <field name="perm_read" eval="1" />
+        <field name="perm_write" eval="1" />
+        <field name="perm_create" eval="1" />
+        <field name="perm_unlink" eval="1" />
+    </record>
+
+    <!-- Lectura por grupo. Las reglas de cada perfil limitan al usuario básico
+         a los documentos donde firma; estas suman los confidenciales a los
+         que tiene acceso (responsable, lista de permisos o grupo). -->
+    <record id="sign_oca_request_rule_confidential_read" model="ir.rule">
+        <field name="name">Sign Request: confidenciales con permiso (lectura)</field>
+        <field name="model_id" ref="model_sign_oca_request" />
+        <field
+            name="domain_force"
+        >[('is_confidential', '=', True), ('has_confidential_access', '=', True)]</field>
+        <field name="groups" eval="[(4, ref('base.group_user'))]" />
+        <field name="perm_read" eval="1" />
+        <field name="perm_write" eval="0" />
+        <field name="perm_create" eval="0" />
+        <field name="perm_unlink" eval="0" />
+    </record>
+    <record id="sign_oca_request_signer_rule_confidential_read" model="ir.rule">
+        <field name="name">Sign Request Signer: confidenciales con permiso (lectura)</field>
+        <field name="model_id" ref="model_sign_oca_request_signer" />
+        <field
+            name="domain_force"
+        >[('request_id.is_confidential', '=', True), ('request_id.has_confidential_access', '=', True)]</field>
+        <field name="groups" eval="[(4, ref('base.group_user'))]" />
+        <field name="perm_read" eval="1" />
+        <field name="perm_write" eval="0" />
+        <field name="perm_create" eval="0" />
+        <field name="perm_unlink" eval="0" />
+    </record>
+    <record id="sign_oca_request_log_rule_confidential_read" model="ir.rule">
+        <field name="name">Sign Request Log: confidenciales con permiso (lectura)</field>
+        <field name="model_id" ref="model_sign_oca_request_log" />
+        <field
+            name="domain_force"
+        >[('request_id.is_confidential', '=', True), ('request_id.has_confidential_access', '=', True)]</field>
+        <field name="groups" eval="[(4, ref('sign_oca_group_user'))]" />
+        <field name="perm_read" eval="1" />
+        <field name="perm_write" eval="0" />
+        <field name="perm_create" eval="0" />
+        <field name="perm_unlink" eval="0" />
+    </record>
+
+    <!-- Reglas globales (sin grupo): se combinan con AND con las de cada
+         perfil, así que un documento confidencial queda oculto incluso para
+         el Administrador de firmas si no participa ni tiene permiso. -->
+    <record id="sign_oca_request_rule_confidential" model="ir.rule">
+        <field name="name">Sign Request: documentos confidenciales</field>
+        <field name="model_id" ref="model_sign_oca_request" />
+        <field
+            name="domain_force"
+        >['|', ('is_confidential', '=', False), ('has_confidential_access', '=', True)]</field>
+    </record>
+    <record id="sign_oca_request_signer_rule_confidential" model="ir.rule">
+        <field name="name">Sign Request Signer: documentos confidenciales</field>
+        <field name="model_id" ref="model_sign_oca_request_signer" />
+        <field
+            name="domain_force"
+        >['|', ('request_id.is_confidential', '=', False), ('request_id.has_confidential_access', '=', True)]</field>
+    </record>
+    <record id="sign_oca_request_log_rule_confidential" model="ir.rule">
+        <field name="name">Sign Request Log: documentos confidenciales</field>
+        <field name="model_id" ref="model_sign_oca_request_log" />
+        <field
+            name="domain_force"
+        >['|', ('request_id.is_confidential', '=', False), ('request_id.has_confidential_access', '=', True)]</field>
+    </record>
+    <record id="sign_oca_request_access_rule_confidential" model="ir.rule">
+        <field name="name">Permisos confidenciales: documentos visibles</field>
+        <field name="model_id" ref="model_sign_oca_request_access" />
+        <field
+            name="domain_force"
+        >['|', ('request_id.is_confidential', '=', False), ('request_id.has_confidential_access', '=', True)]</field>
+    </record>
+</odoo>
