@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<odoo>
+    <record model="ir.ui.view" id="sign_oca_request_cancel_form_view">
+        <field name="name">sign.oca.request.cancel.form</field>
+        <field name="model">sign.oca.request.cancel</field>
+        <field name="arch" type="xml">
+            <form>
+                <field name="request_id" invisible="1" />
+                <field name="signed_count" invisible="1" />
+                <div class="alert alert-warning" role="alert">
+                    Se cancelará la solicitud y los enlaces de firma dejarán de
+                    funcionar.
+                    <span invisible="signed_count == 0">
+                        Este documento ya tiene <field
+                            name="signed_count"
+                            readonly="1"
+                            nolabel="1"
+                            class="oe_inline"
+                        /> firma(s).
+                    </span>
+                </div>
+                <group>
+                    <field name="reason_id" options="{'no_create_edit': True}" />
+                    <field name="requires_detail" invisible="1" />
+                    <field
+                        name="reason"
+                        placeholder="¿Por qué se cancela? Ej.: el contrato se renegoció con otro alcance."
+                        required="requires_detail"
+                    />
+                </group>
+                <div class="text-muted small" invisible="not requires_detail">
+                    Este motivo exige explicar el detalle.
+                </div>
+                <footer>
+                    <button
+                        string="Cancelar solicitud"
+                        name="action_cancel"
+                        type="object"
+                        class="btn-danger"
+                    />
+                    <button string="Volver" class="btn-secondary" special="cancel" />
+                </footer>
+            </form>
+        </field>
+    </record>
+</odoo>
