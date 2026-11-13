@@ -1,0 +1,888 @@
+// Cache-bust marker: forces Odoo to publish a fresh backend asset checksum.
+.o_sign_oca_dashboard {
+    --sign-ink: #17243d;
+    --sign-ink-soft: #40516e;
+    --sign-muted: #71809a;
+    --sign-line: #e1e8f1;
+    --sign-surface: #ffffff;
+    --sign-bg: #f4f7fb;
+    --sign-purple: #7c4d79;
+    --sign-purple-soft: #f1e8f1;
+    --sign-blue: #3769a8;
+    --sign-blue-soft: #e9f1fb;
+    --sign-green: #16866a;
+    --sign-green-soft: #e5f6f0;
+    --sign-orange: #c77b18;
+    --sign-orange-soft: #fff3dd;
+    --sign-red: #bd4e5c;
+    --sign-red-soft: #fdecef;
+    --sign-gray: #68778f;
+    --sign-gray-soft: #edf1f5;
+    min-height: calc(100vh - 90px);
+    padding: clamp(1rem, 2vw, 2rem);
+    background-color: var(--sign-bg);
+    background-image: radial-gradient(
+        circle at 100% 0%,
+        rgba(88, 118, 168, 0.10),
+        transparent 28rem
+    );
+    color: var(--sign-ink);
+    font-size: 0.95rem;
+
+    h1,
+    h2,
+    h3,
+    p {
+        margin-top: 0;
+    }
+
+    h1,
+    h2,
+    h3,
+    strong {
+        color: var(--sign-ink);
+    }
+
+    button {
+        font-family: inherit;
+    }
+
+    .o_sign_oca_eyebrow {
+        color: var(--sign-purple);
+        font-size: 0.68rem;
+        font-weight: 800;
+        letter-spacing: 0.12em;
+        line-height: 1.2;
+        text-transform: uppercase;
+    }
+
+    .o_sign_oca_eyebrow_light {
+        color: rgba(255, 255, 255, 0.72);
+    }
+
+    .o_sign_oca_eyebrow_accent {
+        color: var(--sign-purple);
+    }
+
+    .o_sign_oca_hero {
+        position: relative;
+        display: flex;
+        align-items: flex-end;
+        justify-content: space-between;
+        gap: 2rem;
+        min-height: 245px;
+        overflow: hidden;
+        padding: clamp(1.5rem, 4vw, 3rem);
+        border-radius: 22px;
+        background:
+            linear-gradient(120deg, rgba(21, 35, 62, 0.98), rgba(45, 73, 120, 0.94)),
+            #1c2b48;
+        box-shadow: 0 18px 42px rgba(24, 44, 76, 0.18);
+    }
+
+    .o_sign_oca_hero::before,
+    .o_sign_oca_hero::after {
+        position: absolute;
+        border: 1px solid rgba(255, 255, 255, 0.10);
+        border-radius: 50%;
+        content: "";
+        pointer-events: none;
+    }
+
+    .o_sign_oca_hero::before {
+        top: -11rem;
+        right: 7%;
+        width: 31rem;
+        height: 31rem;
+    }
+
+    .o_sign_oca_hero::after {
+        right: -5rem;
+        bottom: -14rem;
+        width: 28rem;
+        height: 28rem;
+        background: rgba(109, 204, 177, 0.08);
+        border: 0;
+    }
+
+    .o_sign_oca_hero_copy,
+    .o_sign_oca_hero_actions {
+        position: relative;
+        z-index: 1;
+    }
+
+    .o_sign_oca_hero_copy {
+        max-width: 760px;
+    }
+
+    .o_sign_oca_hero h1 {
+        max-width: 700px;
+        margin: 0.65rem 0 0.65rem;
+        color: #ffffff;
+        font-size: clamp(1.8rem, 3.3vw, 3rem);
+        font-weight: 800;
+        letter-spacing: -0.045em;
+        line-height: 1.06;
+    }
+
+    .o_sign_oca_hero p {
+        max-width: 640px;
+        margin-bottom: 1.25rem;
+        color: rgba(255, 255, 255, 0.72);
+        font-size: 1rem;
+        line-height: 1.55;
+    }
+
+    .o_sign_oca_hero_actions {
+        display: flex;
+        flex-shrink: 0;
+        flex-wrap: wrap;
+        justify-content: flex-end;
+        gap: 0.7rem;
+    }
+
+    .o_sign_oca_btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 42px;
+        padding: 0.65rem 1rem;
+        border: 1px solid transparent;
+        border-radius: 10px;
+        cursor: pointer;
+        font-size: 0.84rem;
+        font-weight: 700;
+        line-height: 1;
+        transition: transform 160ms ease, box-shadow 160ms ease, background 160ms ease;
+    }
+
+    .o_sign_oca_btn:hover {
+        transform: translateY(-1px);
+    }
+
+    .o_sign_oca_btn:focus-visible,
+    .o_sign_oca_kpi:focus-visible,
+    .o_sign_oca_document_item:focus-visible,
+    .o_sign_oca_activity_item:focus-visible,
+    .o_sign_oca_department:focus-visible {
+        outline: 3px solid rgba(86, 156, 224, 0.45);
+        outline-offset: 2px;
+    }
+
+    .o_sign_oca_btn:disabled {
+        cursor: wait;
+        opacity: 0.65;
+    }
+
+    .o_sign_oca_btn_ghost {
+        color: #ffffff;
+        background: rgba(255, 255, 255, 0.10);
+        border-color: rgba(255, 255, 255, 0.24);
+    }
+
+    .o_sign_oca_btn_ghost:hover {
+        background: rgba(255, 255, 255, 0.18);
+    }
+
+    .o_sign_oca_btn_light {
+        color: var(--sign-ink);
+        background: #ffffff;
+        box-shadow: 0 8px 20px rgba(11, 25, 48, 0.15);
+    }
+
+    .o_sign_oca_btn_light:hover {
+        background: #effaf5;
+    }
+
+    .o_sign_oca_btn_primary {
+        color: #ffffff;
+        background: var(--sign-purple);
+        box-shadow: 0 8px 18px rgba(124, 77, 121, 0.18);
+    }
+
+    .o_sign_oca_btn_primary:hover {
+        color: #ffffff;
+        background: #694066;
+    }
+
+    .o_sign_oca_summary {
+        padding: 1.4rem 1.5rem 1.5rem;
+        border: 1px solid var(--sign-line);
+        border-radius: 18px;
+        background: rgba(255, 255, 255, 0.72);
+    }
+
+    .o_sign_oca_section_heading,
+    .o_sign_oca_panel_header {
+        display: flex;
+        align-items: flex-start;
+        justify-content: space-between;
+        gap: 1rem;
+    }
+
+    .o_sign_oca_section_heading {
+        align-items: flex-end;
+        margin: 0 0 1.15rem;
+    }
+
+    .o_sign_oca_section_heading h2,
+    .o_sign_oca_panel_header h2 {
+        margin: 0.35rem 0 0;
+        font-size: 1.22rem;
+        font-weight: 800;
+        letter-spacing: -0.025em;
+    }
+
+    .o_sign_oca_panel_header p {
+        margin: 0.35rem 0 0;
+        color: var(--sign-muted);
+        font-size: 0.82rem;
+    }
+
+    .o_sign_oca_hint {
+        color: var(--sign-muted);
+        font-size: 0.76rem;
+    }
+
+    .o_sign_oca_kpis {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+        gap: 0.75rem;
+    }
+
+    .o_sign_oca_kpi {
+        position: relative;
+        display: flex;
+        min-height: 154px;
+        flex-direction: column;
+        overflow: hidden;
+        padding: 1rem;
+        border: 1px solid var(--sign-line);
+        border-radius: 14px;
+        background: var(--sign-surface);
+        box-shadow: 0 5px 16px rgba(33, 56, 91, 0.04);
+        cursor: pointer;
+        transition: transform 160ms ease, box-shadow 160ms ease, border-color 160ms ease;
+    }
+
+    .o_sign_oca_kpi::before {
+        position: absolute;
+        top: 0;
+        right: 0;
+        left: 0;
+        height: 4px;
+        background: var(--sign-kpi-color);
+        content: "";
+    }
+
+    .o_sign_oca_kpi:hover {
+        border-color: var(--sign-kpi-color);
+        box-shadow: 0 12px 24px rgba(33, 56, 91, 0.10);
+        transform: translateY(-3px);
+    }
+
+    .o_sign_oca_kpi_topline {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 1.2rem;
+    }
+
+    .o_sign_oca_kpi_icon {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 34px;
+        height: 34px;
+        color: var(--sign-kpi-color);
+        border-radius: 10px;
+        background: var(--sign-kpi-soft);
+        font-size: 1rem;
+    }
+
+    .o_sign_oca_kpi_arrow {
+        color: #b3bfd0;
+        font-size: 0.72rem;
+    }
+
+    .o_sign_oca_kpi_value {
+        color: var(--sign-kpi-color);
+        font-size: 1.85rem;
+        font-weight: 800;
+        letter-spacing: -0.05em;
+        line-height: 1;
+    }
+
+    .o_sign_oca_kpi_label {
+        margin-top: 0.45rem;
+        color: var(--sign-ink);
+        font-size: 0.83rem;
+        font-weight: 800;
+        line-height: 1.2;
+    }
+
+    .o_sign_oca_kpi_sub {
+        margin-top: auto;
+        padding-top: 0.55rem;
+        color: var(--sign-muted);
+        font-size: 0.7rem;
+        line-height: 1.25;
+    }
+
+    .o_sign_oca_kpi_mine {
+        --sign-kpi-color: var(--sign-purple);
+        --sign-kpi-soft: var(--sign-purple-soft);
+    }
+
+    .o_sign_oca_kpi_primary {
+        --sign-kpi-color: var(--sign-blue);
+        --sign-kpi-soft: var(--sign-blue-soft);
+    }
+
+    .o_sign_oca_kpi_warning {
+        --sign-kpi-color: var(--sign-orange);
+        --sign-kpi-soft: var(--sign-orange-soft);
+    }
+
+    .o_sign_oca_kpi_success {
+        --sign-kpi-color: var(--sign-green);
+        --sign-kpi-soft: var(--sign-green-soft);
+    }
+
+    .o_sign_oca_kpi_danger {
+        --sign-kpi-color: var(--sign-red);
+        --sign-kpi-soft: var(--sign-red-soft);
+    }
+
+    .o_sign_oca_kpi_secondary {
+        --sign-kpi-color: var(--sign-gray);
+        --sign-kpi-soft: var(--sign-gray-soft);
+    }
+
+    .o_sign_oca_kpi_info {
+        --sign-kpi-color: #397e9b;
+        --sign-kpi-soft: #e6f3f7;
+    }
+
+    .o_sign_oca_surface {
+        overflow: hidden;
+        border: 1px solid var(--sign-line);
+        border-radius: 18px;
+        background: var(--sign-surface);
+        box-shadow: 0 7px 22px rgba(33, 56, 91, 0.05);
+    }
+
+    .o_sign_oca_panel_header {
+        padding: 1.35rem 1.45rem 1.15rem;
+        border-bottom: 1px solid #edf1f6;
+    }
+
+    .o_sign_oca_focus {
+        border-color: rgba(124, 77, 121, 0.18);
+    }
+
+    .o_sign_oca_focus_header {
+        background:
+            linear-gradient(110deg, rgba(241, 232, 241, 0.78), rgba(255, 255, 255, 0.98) 70%);
+    }
+
+    .o_sign_oca_focus_count {
+        display: flex;
+        min-width: 76px;
+        flex-direction: column;
+        align-items: flex-end;
+        color: var(--sign-purple);
+    }
+
+    .o_sign_oca_focus_count strong {
+        color: inherit;
+        font-size: 2rem;
+        font-weight: 800;
+        letter-spacing: -0.06em;
+        line-height: 1;
+    }
+
+    .o_sign_oca_focus_count span {
+        margin-top: 0.25rem;
+        color: var(--sign-muted);
+        font-size: 0.72rem;
+    }
+
+    .o_sign_oca_focus_list {
+        padding: 0 1.45rem;
+    }
+
+    .o_sign_oca_focus_item {
+        display: flex;
+        align-items: center;
+        gap: 0.9rem;
+        padding: 1rem 0;
+        border-bottom: 1px solid #edf1f6;
+    }
+
+    .o_sign_oca_focus_item:last-child {
+        border-bottom: 0;
+    }
+
+    .o_sign_oca_focus_icon {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        flex: 0 0 40px;
+        width: 40px;
+        height: 40px;
+        color: var(--sign-purple);
+        border-radius: 12px;
+        background: var(--sign-purple-soft);
+    }
+
+    .o_sign_oca_focus_main,
+    .o_sign_oca_document_main,
+    .o_sign_oca_activity_main {
+        min-width: 0;
+    }
+
+    .o_sign_oca_focus_main {
+        display: flex;
+        flex: 1 1 auto;
+        min-width: 0;
+        flex-direction: column;
+    }
+
+    .o_sign_oca_focus_main strong,
+    .o_sign_oca_document_main strong,
+    .o_sign_oca_activity_main strong {
+        overflow: hidden;
+        color: var(--sign-ink);
+        font-size: 0.9rem;
+        font-weight: 800;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+
+    .o_sign_oca_focus_main span,
+    .o_sign_oca_document_main span,
+    .o_sign_oca_activity_main span {
+        margin-top: 0.25rem;
+        color: var(--sign-muted);
+        font-size: 0.72rem;
+    }
+
+    .o_sign_oca_focus_item .o_sign_oca_btn {
+        flex: 0 0 auto;
+        min-height: 36px;
+        padding: 0.55rem 0.75rem;
+        font-size: 0.74rem;
+    }
+
+    .o_sign_oca_pending_surface {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .o_sign_oca_link_button {
+        flex: 0 0 auto;
+        padding: 0;
+        color: var(--sign-purple);
+        border: 0;
+        background: transparent;
+        cursor: pointer;
+        font-size: 0.76rem;
+        font-weight: 800;
+    }
+
+    .o_sign_oca_link_button:hover {
+        color: #5e385a;
+    }
+
+    .o_sign_oca_document_list {
+        padding: 0 1.45rem;
+    }
+
+    .o_sign_oca_document_item {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        padding: 0.95rem 0;
+        border-bottom: 1px solid #edf1f6;
+        cursor: pointer;
+    }
+
+    .o_sign_oca_document_item:last-child {
+        border-bottom: 0;
+    }
+
+    .o_sign_oca_document_marker {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        flex: 0 0 34px;
+        width: 34px;
+        height: 34px;
+        color: var(--sign-blue);
+        border-radius: 10px;
+        background: var(--sign-blue-soft);
+        font-size: 0.85rem;
+    }
+
+    .o_sign_oca_document_main {
+        flex: 1 1 auto;
+    }
+
+    .o_sign_oca_document_main span {
+        display: block;
+        margin-top: 0.28rem;
+        margin-bottom: 0;
+        color: #5f7896;
+        font-size: 0.78rem;
+    }
+
+    .o_sign_oca_department_bar {
+        width: 100%;
+        height: 5px;
+        overflow: hidden;
+        border-radius: 999px;
+        background: #edf1f5;
+    }
+
+    .o_sign_oca_department_bar_value {
+        display: block;
+        height: 100%;
+        border-radius: inherit;
+        background: linear-gradient(90deg, var(--sign-blue), #72a9e2);
+        transition: width 240ms ease;
+    }
+
+    .o_sign_oca_pending_summary {
+        display: flex;
+        align-items: center;
+        justify-content: flex-start;
+        gap: 0.5rem;
+        margin: auto 1.45rem 1.25rem;
+        padding: 0.7rem 0.85rem;
+        color: var(--sign-orange);
+        border-radius: 10px;
+        background: var(--sign-orange-soft);
+        font-size: 0.73rem;
+        line-height: 1.35;
+    }
+
+    .o_sign_oca_pending_summary strong {
+        color: inherit;
+        font-size: 0.92rem;
+    }
+
+    .o_sign_oca_activity {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .o_sign_oca_activity_badge {
+        flex: 0 0 auto;
+        padding: 0.4rem 0.6rem;
+        color: var(--sign-green);
+        border-radius: 999px;
+        background: var(--sign-green-soft);
+        font-size: 0.7rem;
+        font-weight: 800;
+    }
+
+    .o_sign_oca_activity_list {
+        padding: 0 1.45rem;
+    }
+
+    .o_sign_oca_activity_item {
+        display: flex;
+        align-items: center;
+        gap: 0.8rem;
+        min-height: 61px;
+        padding: 0.65rem 0;
+        border-bottom: 1px solid #edf1f6;
+        cursor: pointer;
+    }
+
+    .o_sign_oca_activity_item:last-child {
+        border-bottom: 0;
+    }
+
+    .o_sign_oca_activity_dot {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        flex: 0 0 31px;
+        width: 31px;
+        height: 31px;
+        border-radius: 50%;
+        font-size: 0.75rem;
+    }
+
+    .o_sign_oca_activity_main {
+        display: flex;
+        flex: 1 1 auto;
+        min-width: 0;
+        flex-direction: column;
+    }
+
+    .o_sign_oca_state_badge {
+        flex: 0 0 auto;
+        padding: 0.35rem 0.55rem;
+        border-radius: 7px;
+        font-size: 0.68rem;
+        font-weight: 800;
+        line-height: 1;
+    }
+
+    .o_sign_oca_activity_arrow {
+        color: #b3bfd0;
+        font-size: 0.8rem;
+    }
+
+    .o_sign_oca_tone_primary {
+        color: var(--sign-blue);
+        background: var(--sign-blue-soft);
+    }
+
+    .o_sign_oca_tone_success {
+        color: var(--sign-green);
+        background: var(--sign-green-soft);
+    }
+
+    .o_sign_oca_tone_danger {
+        color: var(--sign-red);
+        background: var(--sign-red-soft);
+    }
+
+    .o_sign_oca_tone_secondary {
+        color: var(--sign-gray);
+        background: var(--sign-gray-soft);
+    }
+
+    .o_sign_oca_departments {
+        padding-bottom: 1.45rem;
+    }
+
+    .o_sign_oca_department_grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+        gap: 0.85rem;
+        padding: 0 1.45rem;
+    }
+
+    .o_sign_oca_department {
+        padding: 0.95rem;
+        border: 1px solid var(--sign-line);
+        border-radius: 12px;
+        background: #fbfcfe;
+        cursor: pointer;
+        transition: border-color 160ms ease, box-shadow 160ms ease, transform 160ms ease;
+    }
+
+    .o_sign_oca_department:hover {
+        border-color: #afc4df;
+        box-shadow: 0 8px 18px rgba(33, 56, 91, 0.08);
+        transform: translateY(-2px);
+    }
+
+    .o_sign_oca_department_top,
+    .o_sign_oca_department_bottom {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 0.75rem;
+    }
+
+    .o_sign_oca_department_top strong {
+        overflow: hidden;
+        font-size: 0.8rem;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+
+    .o_sign_oca_department_top span {
+        color: var(--sign-blue);
+        font-size: 0.82rem;
+        font-weight: 800;
+    }
+
+    .o_sign_oca_department_bar {
+        margin: 0.75rem 0 0.55rem;
+    }
+
+    .o_sign_oca_department_bar_value {
+        background: linear-gradient(90deg, var(--sign-purple), #b47bad);
+    }
+
+    .o_sign_oca_department_bottom {
+        color: var(--sign-muted);
+        font-size: 0.68rem;
+    }
+
+    .o_sign_oca_empty {
+        display: flex;
+        min-height: 150px;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        padding: 1.5rem;
+        text-align: center;
+    }
+
+    .o_sign_oca_empty_icon {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 38px;
+        height: 38px;
+        margin-bottom: 0.65rem;
+        color: #8c9ab0;
+        border-radius: 12px;
+        background: var(--sign-gray-soft);
+    }
+
+    .o_sign_oca_empty_icon_success {
+        color: var(--sign-green);
+        background: var(--sign-green-soft);
+    }
+
+    .o_sign_oca_empty h3 {
+        margin-bottom: 0.25rem;
+        font-size: 0.9rem;
+        font-weight: 800;
+    }
+
+    .o_sign_oca_empty p {
+        max-width: 290px;
+        margin-bottom: 0;
+        color: var(--sign-muted);
+        font-size: 0.76rem;
+        line-height: 1.45;
+    }
+
+    .o_sign_oca_loading {
+        display: flex;
+        min-height: 55vh;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 0.9rem;
+        color: var(--sign-muted);
+        font-size: 0.86rem;
+    }
+
+    .o_sign_oca_loading_spinner {
+        width: 38px;
+        height: 38px;
+        border: 3px solid #dce4ee;
+        border-top-color: var(--sign-purple);
+        border-radius: 50%;
+        animation: o_sign_oca_spin 800ms linear infinite;
+    }
+
+    @keyframes o_sign_oca_spin {
+        to {
+            transform: rotate(360deg);
+        }
+    }
+
+    @media (max-width: 1399px) {
+        .o_sign_oca_kpis {
+            grid-template-columns: repeat(4, minmax(0, 1fr));
+        }
+    }
+
+    @media (max-width: 991px) {
+        .o_sign_oca_hero {
+            align-items: flex-start;
+            flex-direction: column;
+        }
+
+        .o_sign_oca_hero_actions {
+            justify-content: flex-start;
+        }
+
+        .o_sign_oca_kpis {
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+
+        .o_sign_oca_section_heading {
+            align-items: flex-start;
+            flex-direction: column;
+        }
+    }
+
+    @media (max-width: 575px) {
+        .o_sign_oca_dashboard {
+            padding: 0.75rem;
+        }
+
+        .o_sign_oca_hero {
+            min-height: auto;
+            padding: 1.35rem;
+            border-radius: 16px;
+        }
+
+        .o_sign_oca_hero h1 {
+            font-size: 1.8rem;
+        }
+
+        .o_sign_oca_hero_actions,
+        .o_sign_oca_hero_actions .o_sign_oca_btn {
+            width: 100%;
+        }
+
+        .o_sign_oca_hero_actions .o_sign_oca_btn {
+            flex: 1 1 auto;
+        }
+
+        .o_sign_oca_kpis {
+            grid-template-columns: 1fr;
+        }
+
+        .o_sign_oca_summary {
+            padding: 1rem;
+        }
+
+        .o_sign_oca_panel_header {
+            padding: 1.15rem 1rem 1rem;
+        }
+
+        .o_sign_oca_focus_list,
+        .o_sign_oca_document_list,
+        .o_sign_oca_activity_list,
+        .o_sign_oca_department_grid {
+            padding-right: 1rem;
+            padding-left: 1rem;
+        }
+
+        .o_sign_oca_focus_item {
+            align-items: flex-start;
+            flex-wrap: wrap;
+        }
+
+        .o_sign_oca_focus_item .o_sign_oca_btn {
+            width: 100%;
+            margin-left: 49px;
+        }
+
+        .o_sign_oca_pending_summary {
+            margin-right: 1rem;
+            margin-left: 1rem;
+        }
+
+        .o_sign_oca_activity_badge,
+        .o_sign_oca_state_badge {
+            display: none;
+        }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+        *,
+        *::before,
+        *::after {
+            animation-duration: 1ms !important;
+            animation-iteration-count: 1 !important;
+            scroll-behavior: auto !important;
+            transition-duration: 1ms !important;
+        }
+    }
+}
