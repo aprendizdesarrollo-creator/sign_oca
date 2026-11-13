@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<templates xml:space="preserve">
+    <!-- Portal de firma: quién envió el documento y, si aplica, a nombre de
+         quién se firma con una firma autorizada. -->
+    <t t-inherit="sign_oca.SignOcaPdfPortal" t-inherit-mode="extension">
+        <xpath expr="//header" position="after">
+            <div
+                t-if="info and (info.on_behalf or info.sent_by)"
+                class="o_sign_oca_on_behalf px-3 py-2 border-bottom bg-light small"
+            >
+                <span t-if="info.sent_by">
+                    Enviado a firma por <b t-out="info.sent_by" />.
+                </span>
+                <span t-if="info.on_behalf" class="ms-2 text-primary">
+                    <i class="fa fa-id-card-o me-1" title="Firma autorizada" />
+                    Está firmando a nombre de <b t-out="info.on_behalf.name" /> con la
+                    firma autorizada «<t t-out="info.on_behalf.signature_name" />».
+                </span>
+            </div>
+        </xpath>
+    </t>
+</templates>
