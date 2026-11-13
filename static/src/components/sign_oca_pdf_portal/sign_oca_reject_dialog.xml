@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<templates xml:space="preserve">
+    <t t-name="sign_oca.RejectDialog">
+        <Dialog title="'Rechazar la firma'" size="'md'">
+            <div class="o_sign_oca_reject">
+                <div class="alert alert-warning d-flex align-items-start gap-2" role="alert">
+                    <i class="fa fa-exclamation-triangle mt-1" />
+                    <div>
+                        El documento quedará <b>rechazado</b> y nadie más podrá firmarlo.
+                        Se avisará a quien solicitó la firma.
+                    </div>
+                </div>
+
+                <t t-if="reasons.length">
+                    <label class="form-label fw-semibold">¿Por qué lo rechazas?</label>
+                    <div class="o_sign_oca_reason_list">
+                        <div
+                            t-foreach="reasons"
+                            t-as="reason"
+                            t-key="reason.id"
+                            t-attf-class="o_sign_oca_reason {{state.reasonId === reason.id ? 'is-selected' : ''}}"
+                            role="button"
+                            tabindex="0"
+                            t-on-click="() => this.selectReason(reason.id)"
+                            t-on-keydown="(ev) => (ev.key === 'Enter' || ev.key === ' ') and this.selectReason(reason.id)"
+                        >
+                            <span class="o_sign_oca_reason_check">
+                                <i t-if="state.reasonId === reason.id" class="fa fa-check-circle" />
+                                <i t-else="" class="fa fa-circle-o" />
+                            </span>
+                            <span class="flex-grow-1">
+                                <span t-esc="reason.name" />
+                                <small
+                                    t-if="reason.description"
+                                    class="d-block text-muted"
+                                    t-esc="reason.description"
+                                />
+                            </span>
+                            <span
+                                t-if="reason.requires_detail"
+                                class="badge text-bg-light flex-shrink-0"
+                            >Requiere detalle</span>
+                        </div>
+                    </div>
+                </t>
+
+                <label for="sign_oca_reject_reason" class="form-label mt-3 fw-semibold">
+                    Detalle
+                    <span t-if="requiresDetail" class="text-danger">*</span>
+                    <span t-else="" class="text-muted fw-normal">(opcional)</span>
+                </label>
+                <textarea
+                    id="sign_oca_reject_reason"
+                    class="form-control"
+                    rows="3"
+                    t-model="state.detail"
+                    placeholder="Cuéntanos brevemente qué habría que corregir"
+                />
+                <div t-if="requiresDetail and !state.detail.trim()" class="form-text text-danger">
+                    Este motivo necesita que expliques el detalle.
+                </div>
+            </div>
+
+            <t t-set-slot="footer">
+                <button
+                    class="btn btn-danger"
+                    t-att-disabled="!canConfirm"
+                    t-on-click="() => this.onConfirm()"
+                >Rechazar documento</button>
+                <button
+                    class="btn btn-secondary"
+                    t-on-click="() => this.props.close()"
+                >Cancelar</button>
+            </t>
+        </Dialog>
+    </t>
+</templates>
