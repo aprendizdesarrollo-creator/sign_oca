@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<odoo>
+    <!-- Cierra los documentos ya firmados por todos: genera el certificado y
+         el PDF protegido y avisa a los implicados.
+         Va aparte de la firma para que el último firmante no espere esos
+         segundos (y para que un fallo al generar el PDF no le devuelva un
+         error cuando su firma ya quedó registrada). -->
+    <record id="ir_cron_sign_oca_completion" model="ir.cron">
+        <field name="name">Sign: cerrar documentos firmados (certificado y avisos)</field>
+        <field name="model_id" ref="model_sign_oca_request" />
+        <field name="state">code</field>
+        <field name="code">model._process_pending_completions()</field>
+        <field name="interval_number">2</field>
+        <field name="interval_type">minutes</field>
+        <field name="active" eval="True" />
+    </record>
+</odoo>

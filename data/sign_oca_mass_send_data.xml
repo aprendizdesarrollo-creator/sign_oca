@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<odoo>
+    <data noupdate="1">
+        <record id="seq_sign_oca_mass_send" model="ir.sequence">
+            <field name="name">Envío masivo de firmas</field>
+            <field name="code">sign.oca.mass.send</field>
+            <field name="prefix">EM-%(year)s-</field>
+            <field name="padding">4</field>
+            <field name="company_id" eval="False" />
+        </record>
+        <record id="seq_sign_oca_nda" model="ir.sequence">
+            <field name="name">Acuerdo de confidencialidad (NDA)</field>
+            <field name="code">sign.oca.nda</field>
+            <field name="prefix">NDA-%(year)s-</field>
+            <field name="padding">4</field>
+            <field name="company_id" eval="False" />
+        </record>
+        <record id="sign_role_nda_disclosing" model="sign.oca.role">
+            <field name="name">Parte Reveladora (Representante SDT)</field>
+            <field name="domain">[]</field>
+        </record>
+        <record id="sign_role_nda_receiving" model="sign.oca.role">
+            <field name="name">Parte Receptora</field>
+            <field name="domain">[]</field>
+        </record>
+    </data>
+    <!-- Genera y envía los documentos de los envíos masivos. Se dispara al
+         pulsar "Generar y enviar" (ir.cron._trigger) y avanza por lotes con
+         la API de progreso; el intervalo es solo la red de seguridad. -->
+    <record id="ir_cron_sign_oca_mass_send" model="ir.cron">
+        <field name="name">Sign: procesar envíos masivos</field>
+        <field name="model_id" ref="model_sign_oca_mass_send" />
+        <field name="state">code</field>
+        <field name="code">model._cron_process()</field>
+        <field name="interval_number">1</field>
+        <field name="interval_type">hours</field>
+        <field name="active" eval="True" />
+    </record>
+</odoo>

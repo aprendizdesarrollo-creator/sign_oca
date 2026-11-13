@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<odoo>
+    <!-- noupdate: son editables desde Configuración; una actualización del
+         módulo no debe pisar los cambios que haga el equipo. -->
+    <data noupdate="1">
+
+        <record id="reason_documento_vencido" model="sign.oca.reason">
+            <field name="name">Documento vencido</field>
+            <field name="sequence">10</field>
+            <field name="usage">both</field>
+            <field
+                name="description"
+            >Venció el plazo de firma o la vigencia del documento.</field>
+        </record>
+
+        <record id="reason_tramite_incompleto" model="sign.oca.reason">
+            <field name="name">Trámite incompleto</field>
+            <field name="sequence">20</field>
+            <field name="usage">both</field>
+            <field name="requires_detail" eval="True" />
+            <field
+                name="description"
+            >Faltan anexos, aprobaciones o requisitos previos.</field>
+        </record>
+
+        <record id="reason_decision_administrativa" model="sign.oca.reason">
+            <field name="name">Decisión administrativa</field>
+            <field name="sequence">30</field>
+            <field name="usage">cancel</field>
+            <field name="requires_detail" eval="True" />
+            <field
+                name="description"
+            >Se cancela por determinación interna del área.</field>
+        </record>
+
+        <record id="reason_error_documento" model="sign.oca.reason">
+            <field name="name">Error en el documento</field>
+            <field name="sequence">40</field>
+            <field name="usage">both</field>
+            <field name="requires_detail" eval="True" />
+            <field
+                name="description"
+            >Datos, valores o cláusulas equivocados. Suele seguir una nueva versión.</field>
+        </record>
+
+        <record id="reason_firmante_incorrecto" model="sign.oca.reason">
+            <field name="name">Firmante incorrecto</field>
+            <field name="sequence">50</field>
+            <field name="usage">both</field>
+            <field
+                name="description"
+            >Se envió a la persona equivocada o cambió el responsable.</field>
+        </record>
+
+        <record id="reason_duplicado" model="sign.oca.reason">
+            <field name="name">Duplicado</field>
+            <field name="sequence">60</field>
+            <field name="usage">cancel</field>
+            <field
+                name="description"
+            >Ya existe otra solicitud para el mismo documento.</field>
+        </record>
+
+        <!-- Motivos propios de quien recibe el documento para firmar -->
+        <record id="reason_no_de_acuerdo" model="sign.oca.reason">
+            <field name="name">No estoy de acuerdo con el contenido</field>
+            <field name="sequence">70</field>
+            <field name="usage">reject</field>
+            <field name="requires_detail" eval="True" />
+            <field
+                name="description"
+            >El firmante no acepta las condiciones tal como están redactadas.</field>
+        </record>
+
+        <record id="reason_no_me_corresponde" model="sign.oca.reason">
+            <field name="name">No me corresponde firmar</field>
+            <field name="sequence">80</field>
+            <field name="usage">reject</field>
+            <field
+                name="description"
+            >El documento debería firmarlo otra persona o área.</field>
+        </record>
+
+        <!-- Por defecto: sirve para los dos flujos y pide explicación, así el
+             historial nunca queda con un motivo vacío de contenido. -->
+        <record id="reason_otro" model="sign.oca.reason">
+            <field name="name">Otro</field>
+            <field name="sequence">90</field>
+            <field name="usage">both</field>
+            <field name="requires_detail" eval="True" />
+            <field name="is_default" eval="True" />
+            <field name="description">No encaja en los motivos anteriores.</field>
+        </record>
+
+    </data>
+</odoo>
