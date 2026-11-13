@@ -1,0 +1,218 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!-- Copyright 2026 SDT Ingeniería
+     License AGPL-3.0 or later (https://www.gnu.org/licenses/agpl). -->
+<odoo>
+    <record model="ir.ui.view" id="sign_oca_mass_send_form_view">
+        <field name="name">sign.oca.mass.send.form</field>
+        <field name="model">sign.oca.mass.send</field>
+        <field name="arch" type="xml">
+            <form>
+                <header>
+                    <button
+                        string="Vista previa"
+                        type="object"
+                        name="action_preview"
+                        icon="fa-eye"
+                        invisible="state != 'draft'"
+                    />
+                    <button
+                        string="Generar y enviar"
+                        type="object"
+                        name="action_generate"
+                        icon="fa-paper-plane"
+                        class="btn-primary"
+                        invisible="state != 'draft'"
+                        confirm="Se generará un documento por cada destinatario con la firma indicada y se enviará por correo. ¿Continuar?"
+                    />
+                    <button
+                        string="Reintentar errores"
+                        type="object"
+                        name="action_retry_errors"
+                        icon="fa-repeat"
+                        invisible="error_count == 0 or state == 'draft'"
+                    />
+                    <field name="state" widget="statusbar" />
+                </header>
+                <sheet>
+                    <div class="oe_button_box" name="button_box">
+                        <button
+                            type="object"
+                            name="action_view_requests"
+                            class="oe_stat_button"
+                            icon="fa-pencil-square-o"
+                            invisible="state == 'draft'"
+                        >
+                            <div class="o_stat_info">
+                                <span class="o_stat_value">
+                                    <field name="signed_count" /> / <field name="sent_count" />
+                                </span>
+                                <span class="o_stat_text">Firmados / enviados</span>
+                            </div>
+                        </button>
+                    </div>
+                    <div class="oe_title">
+                        <h1><field name="name" /></h1>
+                    </div>
+                    <div
+                        class="alert alert-info"
+                        role="status"
+                        invisible="state != 'processing'"
+                    >
+                        Generando y enviando en segundo plano:
+                        <field name="pending_count" class="oe_inline" /> pendientes de
+                        <field name="line_count" class="oe_inline" />. Recarga la página para ver el avance.
+                    </div>
+                    <group>
+                        <group string="Destinatarios">
+                            <field name="document_type" readonly="state != 'draft'" />
+                            <field
+                                name="recipient_type"
+                                widget="radio"
+                                options="{'horizontal': true}"
+                                readonly="state != 'draft'"
+                            />
+                            <field
+                                name="department_ids"
+                                widget="many2many_tags"
+                                invisible="recipient_type != 'employee'"
+                                readonly="state != 'draft'"
+                            />
+                            <field name="skip_existing" readonly="state != 'draft'" />
+                            <field name="company_id" groups="base.group_multi_company" readonly="state != 'draft'" />
+                        </group>
+                        <group string="Firma por la empresa (Parte Reveladora)">
+                            <field
+                                name="signer_user_id"
+                                options="{'no_create': True}"
+                                readonly="state != 'draft'"
+                            />
+                            <field name="signer_job_title" readonly="state != 'draft'" />
+                            <field
+                                name="signature"
+                                widget="signature"
+                                readonly="state != 'draft'"
+                            />
+                            <field name="signer_is_current_user" invisible="1" />
+                            <field
+                                name="save_signature"
+                                invisible="not signer_is_current_user or state != 'draft'"
+                            />
+                            <field name="signature_date" invisible="not signature_date" />
+                            <field name="signature_approved_by_id" invisible="not signature_approved_by_id" />
+                            <field name="signature_ip" invisible="not signature_ip" />
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Seleccionar destinatarios" name="selection" invisible="state != 'draft'">
+                            <field
+                                name="employee_ids"
+                                invisible="recipient_type != 'employee'"
+                                options="{'no_create': True}"
+                            >
+                                <list>
+                                    <field name="name" />
+                                    <field name="department_id" />
+                                    <field name="job_id" />
+                                    <field name="work_email" />
+                                </list>
+                            </field>
+                            <field
+                                name="supplier_ids"
+                                invisible="recipient_type != 'supplier'"
+                                options="{'no_create': True}"
+                            >
+                                <list>
+                                    <field name="name" />
+                                    <field name="vat" />
+                                    <field name="email" />
+                                </list>
+                            </field>
+                        </page>
+                        <page string="Contenido del acuerdo" name="content">
+                            <group>
+                                <field name="disclosing_party" readonly="state != 'draft'" />
+                                <field name="info_classification" readonly="state != 'draft'" />
+                                <field name="validity" readonly="state != 'draft'" />
+                                <label for="exception_public" string="Excepciones a la Confidencialidad" />
+                                <div>
+                                    <field name="exception_public" readonly="state != 'draft'" class="oe_inline" /><label for="exception_public" class="me-3" />
+                                    <field name="exception_known" readonly="state != 'draft'" class="oe_inline" /><label for="exception_known" class="me-3" />
+                                    <field name="exception_court" readonly="state != 'draft'" class="oe_inline" /><label for="exception_court" />
+                                </div>
+                                <field name="consequence_type" readonly="state != 'draft'" />
+                                <field name="applicable_law" readonly="state != 'draft'" />
+                            </group>
+                        </page>
+                        <page string="Mensaje del correo" name="message">
+                            <field name="message" readonly="state != 'draft'" />
+                        </page>
+                        <page string="Destinatarios" name="lines" invisible="not line_ids">
+                            <field name="line_ids" readonly="1">
+                                <list
+                                    decoration-success="state == 'sent'"
+                                    decoration-muted="state == 'skipped'"
+                                    decoration-danger="state == 'error'"
+                                >
+                                    <field name="recipient_name" />
+                                    <field name="identification" />
+                                    <field name="job_title" />
+                                    <field name="quality" />
+                                    <field name="agreement_number" />
+                                    <field name="state" />
+                                    <field name="request_state" />
+                                    <field name="note" />
+                                    <field name="request_id" />
+                                </list>
+                            </field>
+                            <group class="oe_subtotal_footer">
+                                <field name="sent_count" string="Enviados" />
+                                <field name="skipped_count" string="Omitidos" />
+                                <field name="error_count" string="Con error" />
+                            </group>
+                        </page>
+                    </notebook>
+                </sheet>
+                <chatter />
+            </form>
+        </field>
+    </record>
+
+    <record model="ir.ui.view" id="sign_oca_mass_send_list_view">
+        <field name="name">sign.oca.mass.send.list</field>
+        <field name="model">sign.oca.mass.send</field>
+        <field name="arch" type="xml">
+            <list>
+                <field name="name" />
+                <field name="create_date" string="Fecha" />
+                <field name="document_type" />
+                <field name="recipient_type" />
+                <field name="signer_user_id" />
+                <field name="sent_count" string="Enviados" />
+                <field name="signed_count" string="Firmados" />
+                <field name="state" widget="badge" decoration-info="state == 'processing'" decoration-success="state == 'done'" />
+            </list>
+        </field>
+    </record>
+
+    <record model="ir.actions.act_window" id="sign_oca_mass_send_act_window">
+        <field name="name">Envío masivo</field>
+        <field name="res_model">sign.oca.mass.send</field>
+        <field name="view_mode">list,form</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">Cree el primer envío masivo</p>
+            <p>
+                Elija quién firma por la empresa, trace su firma una vez y
+                seleccione los empleados: cada uno recibirá su acuerdo FTGT38 ya
+                firmado por la empresa, listo para que lo firme.
+            </p>
+        </field>
+    </record>
+
+    <record model="ir.ui.menu" id="sign_oca_mass_send_menu">
+        <field name="name">Envío masivo</field>
+        <field name="parent_id" ref="sign_oca_root_menu" />
+        <field name="action" ref="sign_oca_mass_send_act_window" />
+        <field name="sequence" eval="15" />
+        <field name="groups_id" eval="[(6, 0, [ref('sign_oca.sign_oca_group_manager')])]" />
+    </record>
+</odoo>

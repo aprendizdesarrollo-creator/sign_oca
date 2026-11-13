@@ -1,0 +1,236 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<odoo>
+    <!-- Seguridad: la ven quien la custodia y su dueño; la configura el
+         Administrador de firmas. -->
+    <record id="access_sign_oca_authorized_signature_manager" model="ir.model.access">
+        <field name="name">sign.oca.authorized.signature.manager</field>
+        <field name="model_id" ref="model_sign_oca_authorized_signature" />
+        <field name="group_id" ref="sign_oca_group_manager" />
+        <field name="perm_read" eval="1" />
+        <field name="perm_write" eval="0" />
+        <field name="perm_create" eval="0" />
+        <field name="perm_unlink" eval="0" />
+    </record>
+    <record id="access_sign_oca_authorized_signature_admin" model="ir.model.access">
+        <field name="name">sign.oca.authorized.signature.admin</field>
+        <field name="model_id" ref="model_sign_oca_authorized_signature" />
+        <field name="group_id" ref="sign_oca_group_admin" />
+        <field name="perm_read" eval="1" />
+        <field name="perm_write" eval="1" />
+        <field name="perm_create" eval="1" />
+        <field name="perm_unlink" eval="1" />
+    </record>
+    <record id="sign_oca_authorized_signature_rule_manager" model="ir.rule">
+        <field name="name">Firma autorizada: custodios y dueño</field>
+        <field name="model_id" ref="model_sign_oca_authorized_signature" />
+        <field
+            name="domain_force"
+        >['|', ('custodian_user_ids', 'in', [user.id]), ('signer_user_id', '=', user.id)]</field>
+        <field name="groups" eval="[(4, ref('sign_oca_group_manager'))]" />
+        <field name="perm_read" eval="1" />
+        <field name="perm_write" eval="0" />
+        <field name="perm_create" eval="0" />
+        <field name="perm_unlink" eval="0" />
+    </record>
+    <record id="sign_oca_authorized_signature_rule_admin" model="ir.rule">
+        <field name="name">Firma autorizada: administrador</field>
+        <field name="model_id" ref="model_sign_oca_authorized_signature" />
+        <field name="domain_force">[(1, '=', 1)]</field>
+        <field name="groups" eval="[(4, ref('sign_oca_group_admin'))]" />
+    </record>
+    <record id="sign_oca_authorized_signature_rule_company" model="ir.rule">
+        <field name="name">Firma autorizada: compañía</field>
+        <field name="model_id" ref="model_sign_oca_authorized_signature" />
+        <field name="domain_force">[('company_id', 'in', company_ids)]</field>
+    </record>
+
+    <record model="ir.ui.view" id="sign_oca_authorized_signature_form_view">
+        <field name="name">sign.oca.authorized.signature.form</field>
+        <field name="model">sign.oca.authorized.signature</field>
+        <field name="arch" type="xml">
+            <form>
+                <sheet>
+                    <widget
+                        name="web_ribbon"
+                        title="Archivada"
+                        bg_color="bg-danger"
+                        invisible="active"
+                    />
+                    <field name="active" invisible="1" />
+                    <div class="oe_title">
+                        <label for="name" />
+                        <h1>
+                            <field name="name" placeholder="Ej.: Representante legal" />
+                        </h1>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="signer_user_id" options="{'no_create': True}" />
+                            <field name="job_title" />
+                            <field
+                                name="custodian_user_ids"
+                                widget="many2many_tags"
+                                options="{'no_create': True}"
+                            />
+                            <field name="company_id" groups="base.group_multi_company" />
+                        </group>
+                        <group>
+                            <field name="signature" widget="signature" />
+                        </group>
+                    </group>
+                    <div class="text-muted">
+                        La firma se puede trazar o cargar como imagen. Cada vez que
+                        alguien la usa en un envío masivo queda registro aquí y se
+                        avisa a su dueño.
+                    </div>
+                </sheet>
+                <chatter />
+            </form>
+        </field>
+    </record>
+
+    <record model="ir.ui.view" id="sign_oca_authorized_signature_list_view">
+        <field name="name">sign.oca.authorized.signature.list</field>
+        <field name="model">sign.oca.authorized.signature</field>
+        <field name="arch" type="xml">
+            <list>
+                <field name="name" />
+                <field name="signer_user_id" />
+                <field name="job_title" />
+                <field name="custodian_user_ids" widget="many2many_tags" />
+            </list>
+        </field>
+    </record>
+
+    <record model="ir.actions.act_window" id="sign_oca_authorized_signature_act_window">
+        <field name="name">Firmas autorizadas</field>
+        <field name="res_model">sign.oca.authorized.signature</field>
+        <field name="view_mode">list,form</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">Configure una firma autorizada</p>
+            <p>
+                Registre la firma de una persona (por ejemplo el representante
+                legal) y habilite a quién puede usarla en los envíos masivos.
+            </p>
+        </field>
+    </record>
+
+    <record model="ir.ui.menu" id="sign_oca_authorized_signature_menu">
+        <field name="name">Firmas autorizadas</field>
+        <field name="parent_id" ref="sign_oca_settings_menu" />
+        <field name="action" ref="sign_oca_authorized_signature_act_window" />
+        <field name="sequence" eval="20" />
+    </record>
+
+    <!-- Envío masivo: el firmante y la firma salen de la configuración -->
+    <record model="ir.ui.view" id="sign_oca_mass_send_form_view_authorized_signature">
+        <field name="name">sign.oca.mass.send.form (firmas autorizadas)</field>
+        <field name="model">sign.oca.mass.send</field>
+        <field name="inherit_id" ref="sign_oca.sign_oca_mass_send_form_view" />
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='signer_user_id']" position="before">
+                <field name="signature_option_count" invisible="1" />
+                <div
+                    colspan="2"
+                    class="alert alert-warning"
+                    role="alert"
+                    invisible="signature_option_count or state != 'draft'"
+                >
+                    No tiene una firma guardada ni firmas autorizadas. Guarde su
+                    firma en Mis preferencias, pestaña Firma, o pida al
+                    administrador de firmas que le habilite una.
+                </div>
+                <field
+                    name="authorized_signature_id"
+                    invisible="signature_option_count &lt; 2"
+                    readonly="state != 'draft'"
+                    placeholder="Mi firma guardada"
+                    options="{'no_create': True, 'no_open': True}"
+                />
+            </xpath>
+            <xpath expr="//field[@name='signer_user_id']" position="attributes">
+                <attribute name="readonly">1</attribute>
+                <attribute name="force_save">1</attribute>
+            </xpath>
+            <xpath expr="//field[@name='signature']" position="attributes">
+                <attribute name="readonly">1</attribute>
+                <attribute name="force_save">1</attribute>
+            </xpath>
+            <xpath expr="//field[@name='save_signature']" position="attributes">
+                <attribute name="invisible">1</attribute>
+            </xpath>
+        </field>
+    </record>
+
+    <!-- Firmantes: quién firmó a nombre de otro y con qué firma autorizada -->
+    <record model="ir.ui.view" id="sign_oca_request_form_view_on_behalf">
+        <field name="name">sign.oca.request.form (firma a nombre de tercero)</field>
+        <field name="model">sign.oca.request</field>
+        <field name="inherit_id" ref="sign_oca.sign_oca_request_form_view" />
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='signer_ids']/list/field[@name='rejected_on']" position="after">
+                <field name="signed_by_user_id" readonly="1" optional="show" />
+                <field name="authorized_signature_id" readonly="1" optional="hide" />
+            </xpath>
+        </field>
+    </record>
+
+    <!-- Ficha del usuario: firma propia y firmas que puede usar -->
+    <record model="ir.ui.view" id="res_users_form_sign_oca_signatures">
+        <field name="name">res.users.form (firmas)</field>
+        <field name="model">res.users</field>
+        <field name="inherit_id" ref="base.view_users_form" />
+        <field name="arch" type="xml">
+            <xpath expr="//notebook" position="inside">
+                <page
+                    string="Firmas"
+                    name="sign_oca_signatures"
+                    groups="sign_oca.sign_oca_group_admin"
+                    invisible="share"
+                >
+                    <group>
+                        <group string="Firma propia">
+                            <field name="sign_oca_signature" widget="signature" />
+                        </group>
+                    </group>
+                    <separator string="Firmas autorizadas que puede usar" />
+                    <field
+                        name="sign_oca_authorized_signature_ids"
+                        nolabel="1"
+                        options="{'no_create': True}"
+                    >
+                        <list>
+                            <field name="name" />
+                            <field name="signer_user_id" />
+                            <field name="job_title" />
+                        </list>
+                    </field>
+                    <div class="text-muted">
+                        Con más de una firma (propia o autorizada), en el envío
+                        masivo se le muestra el selector «Firma a usar».
+                    </div>
+                </page>
+            </xpath>
+        </field>
+    </record>
+
+    <!-- Mis preferencias: firma propia (trazada o imagen) -->
+    <record model="ir.ui.view" id="res_users_preferences_sign_oca_signature">
+        <field name="name">res.users.preferences (firma)</field>
+        <field name="model">res.users</field>
+        <field name="inherit_id" ref="base.view_users_form_simple_modif" />
+        <field name="arch" type="xml">
+            <xpath expr="//notebook" position="inside">
+                <page string="Firma" name="sign_oca_signature">
+                    <group>
+                        <field name="sign_oca_signature" widget="signature" />
+                    </group>
+                    <div class="text-muted">
+                        Firma que se usa en los envíos masivos y que se ofrece al
+                        firmar documentos. Se puede trazar o cargar como imagen.
+                    </div>
+                </page>
+            </xpath>
+        </field>
+    </record>
+</odoo>

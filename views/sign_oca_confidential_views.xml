@@ -1,0 +1,238 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<odoo>
+    <!-- Solicitud: sección de confidencialidad y lista de permisos -->
+    <record model="ir.ui.view" id="sign_oca_request_form_view_confidential">
+        <field name="name">sign.oca.request.form (confidencial)</field>
+        <field name="model">sign.oca.request</field>
+        <field name="inherit_id" ref="sign_oca.sign_oca_request_form_view" />
+        <field name="arch" type="xml">
+            <xpath expr="//div[hasclass('oe_title')]" position="before">
+                <div
+                    class="alert alert-secondary"
+                    role="alert"
+                    invisible="not is_confidential"
+                >
+                    <i class="fa fa-lock me-1" title="Confidencial" />
+                    <b>Documento confidencial.</b>
+                    Solo lo ven el responsable, quien lo emitió, los firmantes
+                    y los usuarios de la lista de permisos.
+                </div>
+            </xpath>
+            <xpath expr="//field[@name='signer_ids']" position="after">
+                <group
+                    string="Confidencialidad"
+                    name="confidentiality"
+                    groups="sign_oca.sign_oca_group_user"
+                >
+                    <field name="can_manage_confidentiality" invisible="1" />
+                    <field name="has_access_password" invisible="1" />
+                    <group>
+                        <field
+                            name="is_confidential"
+                            readonly="not can_manage_confidentiality"
+                        />
+                        <field
+                            name="access_protection"
+                            readonly="not can_manage_confidentiality"
+                        />
+                        <field
+                            name="access_password"
+                            password="True"
+                            invisible="access_protection != 'password'"
+                            required="access_protection == 'password' and not has_access_password"
+                            readonly="not can_manage_confidentiality"
+                            placeholder="Escriba la clave (luego no se puede consultar)"
+                        />
+                        <field
+                            name="require_otp"
+                            readonly="not can_manage_confidentiality"
+                        />
+                    </group>
+                    <group invisible="not is_confidential" string="Permisos adicionales">
+                        <field
+                            name="confidential_access_ids"
+                            nolabel="1"
+                            colspan="2"
+                            readonly="not can_manage_confidentiality"
+                        >
+                            <list editable="bottom">
+                                <field name="user_id" options="{'no_create': True}" />
+                                <field name="note" />
+                                <field
+                                    name="create_uid"
+                                    string="Concedido por"
+                                    readonly="1"
+                                    optional="show"
+                                />
+                                <field
+                                    name="create_date"
+                                    string="Fecha"
+                                    readonly="1"
+                                    optional="show"
+                                />
+                            </list>
+                        </field>
+                    </group>
+                </group>
+            </xpath>
+        </field>
+    </record>
+
+    <record model="ir.ui.view" id="sign_oca_request_tree_view_confidential">
+        <field name="name">sign.oca.request.list (confidencial)</field>
+        <field name="model">sign.oca.request</field>
+        <field name="inherit_id" ref="sign_oca.sign_oca_request_tree_view" />
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='state']" position="after">
+                <field name="is_confidential" string="Confidencial" optional="show" />
+            </xpath>
+        </field>
+    </record>
+
+    <record model="ir.ui.view" id="sign_oca_request_search_view_confidential">
+        <field name="name">sign.oca.request.search (confidencial)</field>
+        <field name="model">sign.oca.request</field>
+        <field name="inherit_id" ref="sign_oca.sign_oca_request_search_view" />
+        <field name="arch" type="xml">
+            <xpath expr="//filter[@name='archived']" position="before">
+                <filter
+                    name="confidential"
+                    string="Confidenciales"
+                    domain="[('is_confidential', '=', True)]"
+                />
+                <filter
+                    name="not_confidential"
+                    string="No confidenciales"
+                    domain="[('is_confidential', '=', False)]"
+                />
+                <separator />
+            </xpath>
+        </field>
+    </record>
+
+    <!-- Plantilla: lo que se marque aquí lo heredan los documentos generados -->
+    <record model="ir.ui.view" id="sign_oca_template_form_view_confidential">
+        <field name="name">sign.oca.template.form (confidencial)</field>
+        <field name="model">sign.oca.template</field>
+        <field name="inherit_id" ref="sign_oca.sign_oca_template_form_view" />
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='ask_location']" position="after">
+                <field name="has_access_password" invisible="1" />
+                <field name="is_confidential" />
+                <field name="access_protection" />
+                <field
+                    name="access_password"
+                    password="True"
+                    invisible="access_protection != 'password'"
+                    required="access_protection == 'password' and not has_access_password"
+                    placeholder="Escriba la clave (luego no se puede consultar)"
+                />
+                <field name="require_otp" />
+            </xpath>
+        </field>
+    </record>
+
+    <!-- Envío masivo: los acuerdos generados heredan la configuración -->
+    <record model="ir.ui.view" id="sign_oca_mass_send_form_view_confidential">
+        <field name="name">sign.oca.mass.send.form (confidencial)</field>
+        <field name="model">sign.oca.mass.send</field>
+        <field name="inherit_id" ref="sign_oca.sign_oca_mass_send_form_view" />
+        <field name="arch" type="xml">
+            <xpath expr="//page[@name='message']" position="after">
+                <page string="Confidencialidad" name="confidentiality">
+                    <field name="has_access_password" invisible="1" />
+                    <group>
+                        <field name="is_confidential" readonly="state != 'draft'" />
+                        <field name="access_protection" readonly="state != 'draft'" />
+                        <field
+                            name="access_password"
+                            password="True"
+                            invisible="access_protection != 'password'"
+                            required="access_protection == 'password' and not has_access_password"
+                            readonly="state != 'draft'"
+                            placeholder="Escriba la clave (luego no se puede consultar)"
+                        />
+                        <field name="require_otp" readonly="state != 'draft'" />
+                    </group>
+                    <div class="text-muted">
+                        Con «Número de documento del firmante» cada persona abre
+                        su acuerdo con su número de identificación, y la copia
+                        firmada que recibe por correo queda cifrada con ese
+                        número.
+                    </div>
+                </page>
+            </xpath>
+        </field>
+    </record>
+
+    <!-- Listado de permisos sobre documentos confidenciales -->
+    <record model="ir.ui.view" id="sign_oca_request_access_list_view">
+        <field name="name">sign.oca.request.access.list</field>
+        <field name="model">sign.oca.request.access</field>
+        <field name="arch" type="xml">
+            <list editable="bottom">
+                <field name="request_id" domain="[('is_confidential', '=', True)]" />
+                <field name="request_state" optional="show" />
+                <field name="user_id" options="{'no_create': True}" />
+                <field name="note" />
+                <field name="create_uid" string="Concedido por" readonly="1" />
+                <field name="create_date" string="Fecha" readonly="1" />
+            </list>
+        </field>
+    </record>
+
+    <record model="ir.ui.view" id="sign_oca_request_access_search_view">
+        <field name="name">sign.oca.request.access.search</field>
+        <field name="model">sign.oca.request.access</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="request_id" />
+                <field name="user_id" />
+                <filter
+                    name="granted_by_me"
+                    string="Concedidos por mí"
+                    domain="[('create_uid', '=', uid)]"
+                />
+                <filter name="mine" string="Mis permisos" domain="[('user_id', '=', uid)]" />
+                <group expand="0" string="Agrupar por">
+                    <filter
+                        name="group_by_request"
+                        string="Documento"
+                        context="{'group_by': 'request_id'}"
+                    />
+                    <filter
+                        name="group_by_user"
+                        string="Usuario"
+                        context="{'group_by': 'user_id'}"
+                    />
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <record model="ir.actions.act_window" id="sign_oca_request_access_act_window">
+        <field name="name">Permisos de documentos confidenciales</field>
+        <field name="res_model">sign.oca.request.access</field>
+        <field name="view_mode">list</field>
+        <field name="context">{'search_default_group_by_request': 1}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">Sin permisos adicionales</p>
+            <p>
+                Aquí se listan los usuarios que pueden ver un documento
+                confidencial sin participar en él. Se agregan desde el propio
+                documento o desde esta lista.
+            </p>
+        </field>
+    </record>
+
+    <record model="ir.ui.menu" id="sign_oca_request_access_menu">
+        <field name="name">Permisos confidenciales</field>
+        <field name="parent_id" ref="sign_oca_root_menu" />
+        <field name="action" ref="sign_oca_request_access_act_window" />
+        <field name="sequence" eval="80" />
+        <field
+            name="groups_id"
+            eval="[(6, 0, [ref('sign_oca.sign_oca_group_creator'), ref('sign_oca.sign_oca_group_confidential')])]"
+        />
+    </record>
+</odoo>
